@@ -2,7 +2,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Logo from "./Logo";
+
+const LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/services", label: "Services" },
+  { href: "/about", label: "About" },
+  { href: "/work", label: "Work" },
+  { href: "/contact", label: "Contact" },
+];
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -11,56 +18,55 @@ export default function Nav() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const links = [
-    { href: "/", label: "Home" },
-    { href: "/services", label: "Services" },
-    { href: "/about", label: "About" },
-    { href: "/work", label: "Work" },
-    { href: "/contact", label: "Contact" },
-  ];
 
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-400"
         style={{
-          background: scrolled ? "rgba(0,0,0,0.95)" : "transparent",
-          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "none",
-          backdropFilter: scrolled ? "blur(12px)" : "none",
+          background: scrolled ? "rgba(248, 247, 244, 0.92)" : "transparent",
+          backdropFilter: scrolled ? "blur(16px)" : "none",
+          borderBottom: scrolled ? "1px solid rgba(26,24,20,0.08)" : "none",
         }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <path d="M2 4 L11 11 L2 18" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="square"/>
-              <path d="M9 4 L18 11 L9 18" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="square" opacity="0.55"/>
+          <Link href="/" className="flex items-center gap-2.5 group" style={{ textDecoration: "none" }}>
+            <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <path d="M2 4L11 11L2 18" stroke="#1a1814" strokeWidth="2.5" fill="none" strokeLinecap="square"/>
+              <path d="M9 4L18 11L9 18" stroke="#1a1814" strokeWidth="2.5" fill="none" strokeLinecap="square" opacity="0.4"/>
             </svg>
-            <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: "16px", letterSpacing: "0.18em" }}>
+            <span style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 700,
+              fontSize: "15px",
+              letterSpacing: "0.2em",
+              color: "var(--ink)",
+              textTransform: "uppercase",
+            }}>
               RANKHIVE
             </span>
           </Link>
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-10">
-            {links.map((l) => (
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center gap-8">
+            {LINKS.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
-                className="nav-link text-xs tracking-widest uppercase"
+                className={`nav-link${pathname === l.href ? " active" : ""}`}
                 style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontFamily: "'DM Sans', sans-serif",
                   fontWeight: 500,
-                  color: pathname === l.href ? "#fff" : "rgba(255,255,255,0.5)",
+                  fontSize: "13px",
+                  letterSpacing: "0.04em",
+                  color: pathname === l.href ? "var(--ink)" : "var(--ink-light)",
                   textDecoration: "none",
                   transition: "color 0.2s",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
-                onMouseLeave={e => (e.currentTarget.style.color = pathname === l.href ? "#fff" : "rgba(255,255,255,0.5)")}
               >
                 {l.label}
               </Link>
@@ -72,56 +78,56 @@ export default function Nav() {
             <Link
               href="/contact"
               style={{
-                background: "white",
-                color: "black",
-                padding: "10px 24px",
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700,
-                fontSize: "11px",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
+                background: "var(--ink)",
+                color: "#f8f7f4",
+                padding: "10px 22px",
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 600,
+                fontSize: "12px",
+                letterSpacing: "0.08em",
                 textDecoration: "none",
                 display: "inline-block",
-                transition: "background 0.2s",
+                borderRadius: "2px",
+                transition: "background 0.2s, transform 0.2s",
               }}
-              onMouseEnter={e => (e.currentTarget.style.background = "#ddd")}
-              onMouseLeave={e => (e.currentTarget.style.background = "white")}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#2d2a26"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "var(--ink)"; }}
             >
-              Get Featured
+              Get Featured →
             </Link>
           </div>
 
-          {/* Mobile menu toggle */}
+          {/* Hamburger */}
           <button
-            className="md:hidden flex flex-col gap-1.5 p-2"
+            className="md:hidden p-2 flex flex-col gap-1.5"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
-            <span style={{ width: 24, height: 1.5, background: menuOpen ? "rgba(255,255,255,0.3)" : "white", display: "block", transition: "all 0.3s", transform: menuOpen ? "rotate(45deg) translate(3px, 3px)" : "none" }} />
-            <span style={{ width: 24, height: 1.5, background: "white", display: "block", transition: "all 0.3s", opacity: menuOpen ? 0 : 1 }} />
-            <span style={{ width: 24, height: 1.5, background: menuOpen ? "rgba(255,255,255,0.3)" : "white", display: "block", transition: "all 0.3s", transform: menuOpen ? "rotate(-45deg) translate(3px, -3px)" : "none" }} />
+            <span style={{ width: 22, height: 1.5, background: "var(--ink)", display: "block", transition: "all 0.3s", transform: menuOpen ? "rotate(45deg) translate(2px, 2px)" : "none" }} />
+            <span style={{ width: 22, height: 1.5, background: "var(--ink)", display: "block", opacity: menuOpen ? 0 : 1, transition: "opacity 0.2s" }} />
+            <span style={{ width: 22, height: 1.5, background: "var(--ink)", display: "block", transition: "all 0.3s", transform: menuOpen ? "rotate(-45deg) translate(2px, -2px)" : "none" }} />
           </button>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       {menuOpen && (
         <div
           className="fixed inset-0 z-40 flex flex-col justify-center px-8"
-          style={{ background: "#000" }}
+          style={{ background: "var(--cream)" }}
         >
-          <div className="flex flex-col gap-8 mt-16">
-            {links.map((l, i) => (
+          <div className="flex flex-col gap-6 mt-16">
+            {LINKS.map((l, i) => (
               <Link
                 key={l.href}
                 href={l.href}
                 onClick={() => setMenuOpen(false)}
                 style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: "clamp(40px, 12vw, 64px)",
-                  color: pathname === l.href ? "white" : "rgba(255,255,255,0.3)",
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "clamp(36px, 10vw, 56px)",
+                  color: pathname === l.href ? "var(--ink)" : "var(--ink-faint)",
                   textDecoration: "none",
-                  letterSpacing: "0.05em",
+                  fontStyle: "italic",
                   animation: `fadeUp 0.4s ease ${i * 0.07}s both`,
                 }}
               >
@@ -129,20 +135,24 @@ export default function Nav() {
               </Link>
             ))}
           </div>
-          <div className="mt-12">
+          <div className="mt-10">
             <Link
               href="/contact"
               onClick={() => setMenuOpen(false)}
               style={{
-                background: "white", color: "black",
+                background: "var(--ink)",
+                color: "var(--cream)",
                 padding: "14px 32px",
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontWeight: 700, fontSize: "12px",
-                letterSpacing: "0.12em", textTransform: "uppercase",
-                textDecoration: "none", display: "inline-block",
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 600,
+                fontSize: "13px",
+                letterSpacing: "0.08em",
+                textDecoration: "none",
+                display: "inline-block",
+                borderRadius: "2px",
               }}
             >
-              Get Featured
+              Get Featured →
             </Link>
           </div>
         </div>

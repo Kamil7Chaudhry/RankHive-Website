@@ -1,358 +1,881 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
-const PUBLICATIONS = ["Forbes", "Inc. Magazine", "Entrepreneur", "Business Insider", "Fast Company", "TechCrunch", "The Wall Street Journal", "Bloomberg", "Wired", "Rolling Stone", "Fortune", "Time"];
+/* ─── Scroll-animation hook ─────────────────────────── */
+function useFadeUp() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.querySelectorAll<HTMLElement>(".fade-up").forEach((c) => c.classList.add("visible"));
+        }
+      },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return ref;
+}
 
-const STATS = [
-  { num: "200+", label: "Clients Featured" },
-  { num: "50+", label: "Top Publications" },
-  { num: "98%", label: "Success Rate" },
-  { num: "3×", label: "Avg. Revenue Growth" },
+/* ─── Animated counter ───────────────────────────────── */
+function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          const duration = 1800;
+          const steps = 60;
+          const increment = target / steps;
+          let current = 0;
+          const timer = setInterval(() => {
+            current = Math.min(current + increment, target);
+            setCount(Math.floor(current));
+            if (current >= target) clearInterval(timer);
+          }, duration / steps);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [target]);
+
+  return (
+    <span ref={ref}>
+      {count}{suffix}
+    </span>
+  );
+}
+
+const PUBLICATIONS = [
+  "Forbes", "Business Insider", "Nasdaq", "Yahoo Finance", "MSN",
+  "Inc. Magazine", "Entrepreneur", "TechCrunch", "Fast Company", "Bloomberg",
+  "Fortune", "The Wall Street Journal",
 ];
 
 const SERVICES = [
-  { num: "01", title: "Media Placement", desc: "Guaranteed features in Forbes, Inc., Entrepreneur and 50+ top-tier outlets that your audience actually reads." },
-  { num: "02", title: "Personal Brand PR", desc: "Position founders and executives as undeniable industry authorities with strategic editorial coverage." },
-  { num: "03", title: "Crisis Communications", desc: "Protect your reputation and control your narrative before and during high-stakes moments." },
-  { num: "04", title: "Brand Storytelling", desc: "Craft compelling narratives that make journalists, investors, and customers take notice." },
+  {
+    num: "01",
+    title: "Media Placement",
+    desc: "Guaranteed features in Forbes, Business Insider, Nasdaq and 50+ top-tier outlets your audience actually reads.",
+    icon: "◈",
+  },
+  {
+    num: "02",
+    title: "Personal Brand PR",
+    desc: "Position founders and executives as undeniable industry authorities through strategic editorial coverage.",
+    icon: "◉",
+  },
+  {
+    num: "03",
+    title: "Brand PR & Launch",
+    desc: "Build the media strategy that makes your launch impossible to ignore — from press release to placement.",
+    icon: "◐",
+  },
+  {
+    num: "04",
+    title: "Reputation Management",
+    desc: "Own your narrative. We push positive coverage and ensure your digital presence reflects the real you.",
+    icon: "◎",
+  },
 ];
 
-export default function Home() {
-  const heroRef = useRef<HTMLDivElement>(null);
+const CLIENTS = [
+  { name: "Thomas Codevilla", role: "Business Attorney", outlet: "Forbes", img: "/thomas-forbes.png" },
+  { name: "Sara Sharp", role: "M&A Attorney", outlet: "Business Insider", img: "/sara-bi.png" },
+  { name: "John Browning", role: "Financial Advisor", outlet: "MSN", img: "/john-msn.png" },
+  { name: "Beard Alan", role: "CEO", outlet: "Yahoo Finance", img: "/beard-yahoo.png" },
+  { name: "Skyler Fernandes", role: "Founder, VU Venture Partners", outlet: "Nasdaq", img: "/skyler-nasdaq.png" },
+];
 
-  useEffect(() => {
-    const hero = heroRef.current;
-    if (!hero) return;
-    const onMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const { innerWidth, innerHeight } = window;
-      const x = (clientX / innerWidth - 0.5) * 20;
-      const y = (clientY / innerHeight - 0.5) * 20;
-      hero.style.backgroundPosition = `${50 + x * 0.3}% ${50 + y * 0.3}%`;
-    };
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
-  }, []);
+/* ─── Sections ───────────────────────────────────────── */
 
+function Hero() {
   return (
-    <>
-      {/* HERO */}
-      <section
-        ref={heroRef}
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
-          padding: "0 24px 80px",
-          position: "relative",
-          overflow: "hidden",
-          background: "#000",
-        }}
-      >
-        {/* Grid lines */}
-        <div style={{
-          position: "absolute", inset: 0,
-          backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
-          pointerEvents: "none",
-        }} />
-
-        {/* Large background text */}
-        <div style={{
-          position: "absolute", top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
-          fontFamily: "'Bebas Neue', sans-serif",
-          fontSize: "clamp(100px, 22vw, 280px)",
-          color: "rgba(255,255,255,0.025)",
-          letterSpacing: "-0.02em",
-          userSelect: "none",
-          whiteSpace: "nowrap",
-          pointerEvents: "none",
-        }}>
-          RANKHIVE
-        </div>
-
-        {/* Top label */}
-        <div style={{
-          position: "absolute", top: "120px", left: "24px", right: "24px",
-          maxWidth: "1200px", margin: "0 auto",
-        }}>
-          <div className="max-w-7xl mx-auto" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
-            <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "11px", letterSpacing: "0.18em", color: "rgba(255,255,255,0.35)", textTransform: "uppercase" }}>
-              PR & Media Coverage Agency
-            </p>
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", display: "inline-block" }} />
-              <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em" }}>Accepting new clients</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Hero content */}
-        <div className="max-w-7xl mx-auto w-full" style={{ position: "relative", zIndex: 2 }}>
-          <h1 style={{
-            fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: "clamp(64px, 12vw, 160px)",
-            lineHeight: "0.92",
-            letterSpacing: "0.01em",
-            marginBottom: "40px",
-            maxWidth: "900px",
-          }}>
-            GET SEEN.<br />
-            <span style={{ color: "rgba(255,255,255,0.35)" }}>GET</span> FEATURED.<br />
-            GET RANKED.
-          </h1>
-
-          <div style={{ display: "flex", gap: "32px", alignItems: "flex-start", flexWrap: "wrap" }}>
-            <div style={{ maxWidth: "380px" }}>
-              <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "16px", lineHeight: "1.7", color: "rgba(255,255,255,0.55)", marginBottom: "32px" }}>
-                We place founders, executives, and brands in Forbes, Inc., Entrepreneur, and 50+ of the world&apos;s most-read publications. No fluff. Just coverage.
-              </p>
-              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-                <Link href="/contact" style={{
-                  background: "white", color: "black",
-                  padding: "14px 32px",
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 700, fontSize: "12px",
-                  letterSpacing: "0.12em", textTransform: "uppercase",
-                  textDecoration: "none", display: "inline-block",
-                  transition: "background 0.2s",
-                }}>
-                  Start Today
-                </Link>
-                <Link href="/work" style={{
-                  border: "1px solid rgba(255,255,255,0.25)", color: "white",
-                  padding: "13px 32px",
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 600, fontSize: "12px",
-                  letterSpacing: "0.12em", textTransform: "uppercase",
-                  textDecoration: "none", display: "inline-block",
-                  transition: "all 0.2s",
-                }}>
-                  See Our Work
-                </Link>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div style={{ display: "flex", gap: "40px", flexWrap: "wrap", marginLeft: "auto" }}>
-              {STATS.map(s => (
-                <div key={s.label}>
-                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "48px", letterSpacing: "0.02em", lineHeight: 1 }}>{s.num}</p>
-                  <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "6px" }}>{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div style={{ position: "absolute", bottom: "32px", right: "32px", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
-          <div style={{ width: 1, height: 60, background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.3))" }} />
-          <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.25)", letterSpacing: "0.15em", textTransform: "uppercase", writingMode: "vertical-rl" }}>Scroll</p>
-        </div>
-      </section>
-
-      {/* MARQUEE */}
-      <div style={{ background: "#fff", overflow: "hidden", padding: "14px 0", borderTop: "none" }}>
-        <div className="marquee-track" style={{ display: "flex", gap: "0", whiteSpace: "nowrap" }}>
-          {[...PUBLICATIONS, ...PUBLICATIONS].map((pub, i) => (
-            <span key={i} style={{
-              fontFamily: "'Bebas Neue', sans-serif",
-              fontSize: "18px",
-              color: "#000",
-              letterSpacing: "0.08em",
-              padding: "0 32px",
-            }}>
-              {pub}
-              <span style={{ opacity: 0.3, marginLeft: "32px" }}>✦</span>
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* SERVICES PREVIEW */}
-      <section style={{ padding: "120px 24px", background: "#000" }}>
-        <div className="max-w-7xl mx-auto">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "80px", flexWrap: "wrap", gap: "24px" }}>
-            <div>
-              <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "11px", letterSpacing: "0.18em", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", marginBottom: "16px" }}>What We Do</p>
-              <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(48px, 8vw, 96px)", lineHeight: 0.92, letterSpacing: "0.01em" }}>
-                OUR<br />SERVICES
-              </h2>
-            </div>
-            <Link href="/services" style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: "12px", letterSpacing: "0.12em",
-              color: "rgba(255,255,255,0.5)", textDecoration: "none",
-              textTransform: "uppercase", transition: "color 0.2s",
-              borderBottom: "1px solid rgba(255,255,255,0.2)",
-              paddingBottom: "4px",
-            }}>
-              View All Services →
-            </Link>
-          </div>
-
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-            {SERVICES.map((s, i) => (
-              <div
-                key={s.num}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "80px 1fr auto",
-                  alignItems: "center",
-                  padding: "40px 0",
-                  borderBottom: "1px solid rgba(255,255,255,0.08)",
-                  gap: "32px",
-                  cursor: "default",
-                  transition: "background 0.2s",
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
-                onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-              >
-                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.2)", letterSpacing: "0.1em" }}>{s.num}</span>
-                <div>
-                  <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(28px, 4vw, 48px)", letterSpacing: "0.02em", marginBottom: "8px" }}>{s.title}</h3>
-                  <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "14px", color: "rgba(255,255,255,0.45)", lineHeight: "1.6", maxWidth: "480px" }}>{s.desc}</p>
-                </div>
-                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "20px", color: "rgba(255,255,255,0.15)" }}>→</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CASE STUDY HIGHLIGHT */}
-      <section style={{ padding: "0 24px 120px", background: "#000" }}>
-        <div className="max-w-7xl mx-auto">
-          <div style={{
-            border: "1px solid rgba(255,255,255,0.1)",
-            padding: "clamp(40px, 6vw, 80px)",
-            position: "relative",
-            overflow: "hidden",
-          }}>
-            {/* BG accent */}
+    <section style={{
+      minHeight: "100vh",
+      background: "var(--cream)",
+      display: "flex",
+      alignItems: "center",
+      padding: "0 24px",
+      paddingTop: "88px",
+      overflow: "hidden",
+      position: "relative",
+    }}>
+      <div className="max-w-7xl mx-auto w-full" style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "48px", alignItems: "center" }} className="lg:grid lg:grid-cols-2">
+          {/* Left: text */}
+          <div style={{ paddingTop: "40px", paddingBottom: "60px" }}>
+            {/* Badge */}
             <div style={{
-              position: "absolute", top: "-60px", right: "-60px",
-              width: "300px", height: "300px",
-              background: "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)",
-              pointerEvents: "none",
-            }} />
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "var(--green-bg)",
+              borderRadius: "100px",
+              padding: "6px 14px",
+              marginBottom: "32px",
+            }}>
+              <span style={{
+                width: 7, height: 7, borderRadius: "50%",
+                background: "var(--green)",
+                display: "inline-block",
+                boxShadow: "0 0 0 3px rgba(45,106,79,0.2)",
+              }} />
+              <span style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "12px",
+                fontWeight: 600,
+                color: "var(--green)",
+                letterSpacing: "0.04em",
+              }}>
+                Accepting New Clients
+              </span>
+            </div>
 
-            <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "11px", letterSpacing: "0.18em", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", marginBottom: "24px" }}>
-              Featured Work
+            <h1 style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(42px, 6vw, 76px)",
+              fontWeight: 700,
+              lineHeight: "1.1",
+              letterSpacing: "-0.02em",
+              color: "var(--ink)",
+              marginBottom: "28px",
+              maxWidth: "580px",
+            }}>
+              Get Featured in the<br />
+              <em style={{ fontStyle: "italic", color: "var(--ink-mid)" }}>Publications That Matter.</em>
+            </h1>
+
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "17px",
+              color: "var(--ink-light)",
+              lineHeight: "1.75",
+              maxWidth: "420px",
+              marginBottom: "40px",
+            }}>
+              We place founders, executives, and brands in Forbes, Business Insider, Nasdaq, and 50+ of the world&apos;s most-read publications.
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "60px", alignItems: "center" }} className="flex-col-mobile">
-              <div>
-                <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(36px, 5vw, 72px)", lineHeight: 0.95, marginBottom: "24px", letterSpacing: "0.01em" }}>
-                  THOMAS<br />CODEVILLA<br /><span style={{ color: "rgba(255,255,255,0.3)" }}>× FORBES</span>
-                </h3>
-                <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "15px", color: "rgba(255,255,255,0.5)", lineHeight: "1.7", marginBottom: "32px" }}>
-                  Co-Founder of SK&amp;S Law Group. We crafted his personal brand narrative and secured a Forbes feature that positioned him as a leading voice in business law.
-                </p>
-                <Link href="/work" style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "12px", fontWeight: 700,
-                  letterSpacing: "0.12em", textTransform: "uppercase",
-                  color: "white", textDecoration: "none",
-                  borderBottom: "1px solid rgba(255,255,255,0.4)",
-                  paddingBottom: "4px",
-                }}>
-                  See Case Study →
-                </Link>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                {["Forbes Feature", "Inc. Magazine", "Personal Brand Strategy", "Media Coverage"].map(tag => (
-                  <div key={tag} style={{ border: "1px solid rgba(255,255,255,0.1)", padding: "16px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.6)" }}>{tag}</span>
-                    <span style={{ color: "rgba(255,255,255,0.2)" }}>✓</span>
-                  </div>
+
+            <div style={{ display: "flex", gap: "14px", flexWrap: "wrap", marginBottom: "48px" }}>
+              <Link href="/contact" style={{
+                background: "var(--ink)",
+                color: "var(--cream)",
+                padding: "14px 30px",
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 600,
+                fontSize: "14px",
+                letterSpacing: "0.04em",
+                textDecoration: "none",
+                borderRadius: "2px",
+                display: "inline-block",
+                transition: "background 0.2s",
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#2d2a26"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "var(--ink)"; }}
+              >
+                Start Today
+              </Link>
+              <Link href="/work" style={{
+                border: "1.5px solid var(--border)",
+                color: "var(--ink-mid)",
+                padding: "13px 30px",
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 500,
+                fontSize: "14px",
+                textDecoration: "none",
+                borderRadius: "2px",
+                display: "inline-block",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--ink)"; (e.currentTarget as HTMLElement).style.color = "var(--ink)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; (e.currentTarget as HTMLElement).style.color = "var(--ink-mid)"; }}
+              >
+                See Our Work
+              </Link>
+            </div>
+
+            {/* Publication pills */}
+            <div>
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "11px",
+                fontWeight: 500,
+                letterSpacing: "0.1em",
+                color: "var(--ink-faint)",
+                textTransform: "uppercase",
+                marginBottom: "12px",
+              }}>
+                Featured in
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {["Forbes", "Business Insider", "Nasdaq", "Yahoo Finance", "MSN"].map(pub => (
+                  <span key={pub} style={{
+                    padding: "5px 14px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "100px",
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    color: "var(--ink-mid)",
+                    background: "rgba(255,255,255,0.5)",
+                  }}>
+                    {pub}
+                  </span>
                 ))}
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
+          {/* Right: photo collage */}
+          <div
+            className="hidden lg:block"
+            style={{
+              position: "relative",
+              height: "560px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {/* Main photo — Thomas */}
+            <div style={{
+              position: "absolute",
+              left: "60px",
+              top: "40px",
+              width: "260px",
+              height: "340px",
+              borderRadius: "4px",
+              overflow: "hidden",
+              boxShadow: "0 24px 80px rgba(26,24,20,0.14)",
+              border: "3px solid #fff",
+              zIndex: 2,
+            }}>
+              <Image
+                src="/thomas-forbes.png"
+                alt="Thomas Codevilla — Forbes"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+              <div style={{
+                position: "absolute",
+                bottom: 0, left: 0, right: 0,
+                background: "linear-gradient(transparent, rgba(26,24,20,0.7))",
+                padding: "20px 16px 14px",
+              }}>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", fontWeight: 700, color: "#fff", letterSpacing: "0.08em" }}>FORBES</p>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.8)" }}>Thomas Codevilla</p>
+              </div>
+            </div>
 
-      {/* REAL PLACEMENTS TICKER */}
-      <section style={{ padding: "80px 24px", background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-        <div className="max-w-7xl mx-auto">
-          <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "11px", letterSpacing: "0.18em", color: "rgba(255,255,255,0.2)", textTransform: "uppercase", textAlign: "center", marginBottom: "40px" }}>Real clients placed in</p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center" }}>
-            {["Forbes", "Business Insider", "MSN", "Yahoo Finance", "Nasdaq", "Inc. Magazine", "Entrepreneur", "TechCrunch", "Fast Company", "Bloomberg"].map(pub => (
-              <span key={pub} style={{ padding: "10px 22px", border: "1px solid rgba(255,255,255,0.08)", fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", fontWeight: 600, color: "rgba(255,255,255,0.3)", letterSpacing: "0.05em" }}>{pub}</span>
-            ))}
-          </div>
-        </div>
-      </section>
+            {/* Overlapping photo — Sara */}
+            <div style={{
+              position: "absolute",
+              right: "40px",
+              top: "120px",
+              width: "220px",
+              height: "290px",
+              borderRadius: "4px",
+              overflow: "hidden",
+              boxShadow: "0 20px 60px rgba(26,24,20,0.16)",
+              border: "3px solid #fff",
+              zIndex: 3,
+            }}>
+              <Image
+                src="/sara-bi.png"
+                alt="Sara Sharp — Business Insider"
+                fill
+                style={{ objectFit: "cover" }}
+              />
+              <div style={{
+                position: "absolute",
+                bottom: 0, left: 0, right: 0,
+                background: "linear-gradient(transparent, rgba(26,24,20,0.7))",
+                padding: "20px 16px 14px",
+              }}>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", fontWeight: 700, color: "#fff", letterSpacing: "0.08em" }}>BUSINESS INSIDER</p>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.8)" }}>Sara Sharp</p>
+              </div>
+            </div>
 
-      {/* TESTIMONIAL */}
-      <section style={{ padding: "100px 24px", background: "#000", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="max-w-7xl mx-auto">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "80px", alignItems: "center" }}>
-            <div>
-              <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "11px", letterSpacing: "0.18em", color: "rgba(255,255,255,0.25)", textTransform: "uppercase", marginBottom: "32px" }}>Client Testimonial</p>
-              <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "clamp(17px, 2vw, 22px)", color: "rgba(255,255,255,0.75)", lineHeight: "1.8", fontStyle: "italic", marginBottom: "40px" }}>
-                &ldquo;RankHive was responsive, professional, and diligent. I&apos;m very very impressed. The team went above and beyond my expectations to deliver impressive results. If you&apos;re thinking of working with them, I am positive you&apos;ll be pleased. Don&apos;t let this one get away.&rdquo;
-              </p>
+            {/* Floating label */}
+            <div style={{
+              position: "absolute",
+              bottom: "80px",
+              left: "30px",
+              background: "#fff",
+              borderRadius: "6px",
+              padding: "12px 18px",
+              boxShadow: "0 8px 32px rgba(26,24,20,0.1)",
+              zIndex: 4,
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: "50%",
+                background: "var(--green-bg)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <span style={{ fontSize: "16px" }}>✓</span>
+              </div>
               <div>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "26px", letterSpacing: "0.05em", marginBottom: "4px" }}>Sara Sharp</p>
-                <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.35)" }}>Co-Founder &amp; M&amp;A Attorney, SK&amp;S Law Group</p>
-                <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.3)", marginTop: "4px" }}>Featured in Business Insider</p>
-                <div style={{ display: "flex", gap: "3px", marginTop: "12px" }}>
-                  {[1,2,3,4,5].map(s => <span key={s} style={{ color: "white", fontSize: "15px" }}>★</span>)}
-                </div>
-              </div>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-              {[
-                { name: "Thomas Codevilla", outlet: "Forbes", role: "Business Attorney" },
-                { name: "Sara Sharp", outlet: "Business Insider", role: "M&A Attorney" },
-                { name: "John Browning", outlet: "MSN", role: "Financial Advisor" },
-                { name: "Beard Alan", outlet: "Yahoo Finance", role: "Capital Strategist" },
-                { name: "Skyler Fernandes", outlet: "Nasdaq", role: "Venture Capitalist" },
-              ].map((item, i) => (
-                <div key={item.name} style={{ padding: "20px 24px", background: i % 2 === 0 ? "rgba(255,255,255,0.02)" : "transparent", border: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "14px", fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>{item.name}</p>
-                    <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.3)", marginTop: "2px" }}>{item.role}</p>
-                  </div>
-                  <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "12px", fontWeight: 700, color: "white", background: "rgba(255,255,255,0.1)", padding: "4px 12px" }}>{item.outlet}</span>
-                </div>
-              ))}
-              <div style={{ marginTop: "8px" }}>
-                <Link href="/work" style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "12px", color: "rgba(255,255,255,0.4)", textDecoration: "none", letterSpacing: "0.1em", textTransform: "uppercase", borderBottom: "1px solid rgba(255,255,255,0.15)", paddingBottom: "3px" }}>See All Case Studies →</Link>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", fontWeight: 700, color: "var(--ink)" }}>200+ Placements</p>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "var(--ink-light)" }}>Top-tier publications</p>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* CTA BANNER */}
-      <section style={{ padding: "100px 24px", background: "#fff" }}>
-        <div className="max-w-7xl mx-auto" style={{ textAlign: "center" }}>
-          <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "11px", letterSpacing: "0.18em", color: "rgba(0,0,0,0.35)", textTransform: "uppercase", marginBottom: "24px" }}>Ready to be seen?</p>
-          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(56px, 10vw, 120px)", color: "#000", lineHeight: 0.9, letterSpacing: "0.01em", marginBottom: "40px" }}>
-            YOUR NAME.<br />THEIR FRONT PAGE.
-          </h2>
-          <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "16px", color: "rgba(0,0,0,0.5)", maxWidth: "480px", margin: "0 auto 40px", lineHeight: "1.7" }}>
-            One conversation is all it takes. Let&apos;s figure out exactly where you should be featured — and make it happen.
-          </p>
-          <Link href="/contact" style={{
-            background: "black", color: "white",
-            padding: "16px 48px",
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 700, fontSize: "13px",
-            letterSpacing: "0.12em", textTransform: "uppercase",
-            textDecoration: "none", display: "inline-block",
+function Marquee() {
+  const doubled = [...PUBLICATIONS, ...PUBLICATIONS];
+  return (
+    <div style={{ background: "var(--ink)", overflow: "hidden", padding: "16px 0" }}>
+      <div className="marquee-track" style={{ display: "flex", whiteSpace: "nowrap" }}>
+        {doubled.map((pub, i) => (
+          <span key={i} style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 600,
+            fontSize: "13px",
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            color: i % 2 === 0 ? "rgba(248,247,244,0.9)" : "rgba(248,247,244,0.3)",
+            padding: "0 28px",
           }}>
-            Book a Strategy Call
+            {pub}
+            {i % 2 === 0 && <span style={{ marginLeft: "28px", opacity: 0.3 }}>✦</span>}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Stats() {
+  const ref = useFadeUp() as React.RefObject<HTMLElement>;
+  return (
+    <section
+      ref={ref as React.RefObject<HTMLDivElement>}
+      style={{
+        background: "#fff",
+        borderBottom: "1px solid var(--border-light)",
+        padding: "64px 24px",
+      }}
+    >
+      <div className="max-w-7xl mx-auto">
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+          gap: "40px",
+        }}>
+          {[
+            { target: 200, suffix: "+", label: "Clients Featured" },
+            { target: 50, suffix: "+", label: "Publications" },
+            { target: 98, suffix: "%", label: "Success Rate" },
+            { target: 24, suffix: "H", label: "Response Time" },
+          ].map((s, i) => (
+            <div key={s.label} className={`fade-up delay-${i + 1}`} style={{ textAlign: "center" }}>
+              <p style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "clamp(48px, 6vw, 64px)",
+                fontWeight: 700,
+                color: "var(--ink)",
+                lineHeight: 1,
+                letterSpacing: "-0.02em",
+              }}>
+                <Counter target={s.target} suffix={s.suffix} />
+              </p>
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "12px",
+                fontWeight: 500,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: "var(--ink-faint)",
+                marginTop: "10px",
+              }}>
+                {s.label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Services() {
+  const ref = useFadeUp() as React.RefObject<HTMLElement>;
+  return (
+    <section
+      ref={ref as React.RefObject<HTMLDivElement>}
+      style={{ padding: "100px 24px", background: "var(--cream)" }}
+    >
+      <div className="max-w-7xl mx-auto">
+        <div style={{ marginBottom: "64px" }}>
+          <p className="fade-up" style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "11px",
+            fontWeight: 600,
+            letterSpacing: "0.16em",
+            color: "var(--ink-faint)",
+            textTransform: "uppercase",
+            marginBottom: "16px",
+          }}>
+            What We Do
+          </p>
+          <h2 className="fade-up delay-1" style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "clamp(36px, 5vw, 56px)",
+            fontWeight: 700,
+            color: "var(--ink)",
+            letterSpacing: "-0.02em",
+            lineHeight: "1.15",
+            maxWidth: "480px",
+          }}>
+            Our Services
+          </h2>
+        </div>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: "24px",
+        }}>
+          {SERVICES.map((s, i) => (
+            <div
+              key={s.num}
+              className={`fade-up card-hover delay-${i + 1}`}
+              style={{
+                background: "#fff",
+                border: "1px solid var(--border-light)",
+                borderRadius: "6px",
+                padding: "36px 30px",
+              }}
+            >
+              <div style={{
+                fontSize: "24px",
+                marginBottom: "20px",
+                color: "var(--ink-faint)",
+              }}>
+                {s.icon}
+              </div>
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                color: "var(--ink-faint)",
+                textTransform: "uppercase",
+                marginBottom: "12px",
+              }}>
+                {s.num}
+              </p>
+              <h3 style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "22px",
+                fontWeight: 600,
+                color: "var(--ink)",
+                marginBottom: "14px",
+                lineHeight: "1.3",
+              }}>
+                {s.title}
+              </h3>
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "14px",
+                color: "var(--ink-light)",
+                lineHeight: "1.75",
+              }}>
+                {s.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="fade-up" style={{ marginTop: "40px", textAlign: "right" }}>
+          <Link href="/services" style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "13px",
+            fontWeight: 500,
+            color: "var(--ink-mid)",
+            textDecoration: "none",
+            borderBottom: "1px solid var(--border)",
+            paddingBottom: "3px",
+            transition: "color 0.2s",
+          }}>
+            View all services →
           </Link>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
+
+function FeaturedWork() {
+  const ref = useFadeUp() as React.RefObject<HTMLElement>;
+  return (
+    <section
+      ref={ref as React.RefObject<HTMLDivElement>}
+      style={{ padding: "100px 24px", background: "var(--cream-dark)" }}
+    >
+      <div className="max-w-7xl mx-auto">
+        <div style={{ marginBottom: "56px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "20px" }}>
+          <div>
+            <p className="fade-up" style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.16em",
+              color: "var(--ink-faint)",
+              textTransform: "uppercase",
+              marginBottom: "14px",
+            }}>
+              Real Clients. Real Placements.
+            </p>
+            <h2 className="fade-up delay-1" style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(32px, 5vw, 52px)",
+              fontWeight: 700,
+              color: "var(--ink)",
+              letterSpacing: "-0.02em",
+              lineHeight: "1.15",
+            }}>
+              Featured Work
+            </h2>
+          </div>
+          <Link className="fade-up delay-2" href="/work" style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "13px",
+            fontWeight: 500,
+            color: "var(--ink-light)",
+            textDecoration: "none",
+            borderBottom: "1px solid var(--border)",
+            paddingBottom: "3px",
+          }}>
+            See all case studies →
+          </Link>
+        </div>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+          gap: "20px",
+        }}>
+          {CLIENTS.map((c, i) => (
+            <div
+              key={c.name}
+              className={`fade-up card-hover delay-${i + 1}`}
+              style={{
+                background: "#fff",
+                borderRadius: "6px",
+                overflow: "hidden",
+                border: "1px solid var(--border-light)",
+              }}
+            >
+              <div style={{ position: "relative", height: "260px" }}>
+                <Image
+                  src={c.img}
+                  alt={`${c.name} — ${c.outlet}`}
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
+                {/* Outlet badge */}
+                <div style={{
+                  position: "absolute",
+                  top: "14px",
+                  right: "14px",
+                  background: "#fff",
+                  borderRadius: "100px",
+                  padding: "4px 10px",
+                  boxShadow: "0 2px 12px rgba(26,24,20,0.12)",
+                }}>
+                  <span style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "10px",
+                    fontWeight: 700,
+                    color: "var(--ink)",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                  }}>
+                    {c.outlet}
+                  </span>
+                </div>
+              </div>
+              <div style={{ padding: "18px 20px" }}>
+                <p style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "17px",
+                  fontWeight: 600,
+                  color: "var(--ink)",
+                  marginBottom: "4px",
+                }}>
+                  {c.name}
+                </p>
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "12px",
+                  color: "var(--ink-faint)",
+                }}>
+                  {c.role}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Testimonial() {
+  const ref = useFadeUp() as React.RefObject<HTMLElement>;
+  return (
+    <section
+      ref={ref as React.RefObject<HTMLDivElement>}
+      style={{ background: "#1a1814", padding: "100px 24px" }}
+    >
+      <div className="max-w-7xl mx-auto">
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "80px",
+          alignItems: "center",
+        }}>
+          {/* Quote */}
+          <div>
+            <p className="fade-up" style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.16em",
+              color: "rgba(248,247,244,0.3)",
+              textTransform: "uppercase",
+              marginBottom: "32px",
+            }}>
+              Client Testimonial
+            </p>
+            <p className="fade-up delay-1" style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(18px, 2.2vw, 24px)",
+              fontStyle: "italic",
+              color: "rgba(248,247,244,0.9)",
+              lineHeight: "1.8",
+              marginBottom: "40px",
+            }}>
+              &ldquo;RankHive was responsive, professional, and diligent. I&apos;m very very impressed. The team went above and beyond my expectations to deliver impressive results. If you&apos;re thinking of working with them, I am positive you&apos;ll be pleased. Don&apos;t let this one get away.&rdquo;
+            </p>
+            <div className="fade-up delay-2" style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <div style={{
+                width: 52, height: 52, borderRadius: "50%",
+                overflow: "hidden",
+                border: "2px solid rgba(248,247,244,0.2)",
+                flexShrink: 0,
+                position: "relative",
+              }}>
+                <Image
+                  src="/sara-testimonial.png"
+                  alt="Sara Sharp"
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
+              </div>
+              <div>
+                <p style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "18px",
+                  fontWeight: 600,
+                  color: "#f8f7f4",
+                  marginBottom: "3px",
+                }}>
+                  Sara Sharp
+                </p>
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "13px",
+                  color: "rgba(248,247,244,0.45)",
+                }}>
+                  Co-Founder & M&A Attorney, SK&S Law Group
+                </p>
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "12px",
+                  color: "rgba(248,247,244,0.3)",
+                  marginTop: "2px",
+                }}>
+                  Featured in Business Insider
+                </p>
+              </div>
+            </div>
+            <div className="fade-up delay-3" style={{ display: "flex", gap: "3px", marginTop: "20px" }}>
+              {[1,2,3,4,5].map(s => (
+                <span key={s} style={{ color: "#d4ac0d", fontSize: "16px" }}>★</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Featured photo */}
+          <div className="fade-up delay-2" style={{
+            position: "relative",
+            height: "420px",
+            borderRadius: "6px",
+            overflow: "hidden",
+            border: "1px solid rgba(248,247,244,0.06)",
+          }}>
+            <Image
+              src="/sara-bi.png"
+              alt="Sara Sharp"
+              fill
+              style={{ objectFit: "cover", opacity: 0.85 }}
+            />
+            <div style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to top, rgba(26,24,20,0.6) 0%, transparent 60%)",
+            }} />
+            <div style={{
+              position: "absolute",
+              bottom: "24px",
+              left: "24px",
+              right: "24px",
+            }}>
+              <span style={{
+                display: "inline-block",
+                background: "rgba(248,247,244,0.15)",
+                border: "1px solid rgba(248,247,244,0.2)",
+                backdropFilter: "blur(8px)",
+                borderRadius: "100px",
+                padding: "6px 14px",
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "11px",
+                fontWeight: 600,
+                color: "#f8f7f4",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+              }}>
+                Business Insider
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CTA() {
+  const ref = useFadeUp() as React.RefObject<HTMLElement>;
+  return (
+    <section
+      ref={ref as React.RefObject<HTMLDivElement>}
+      style={{
+        padding: "120px 24px",
+        background: "var(--cream)",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Decorative line */}
+      <div style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%,-50%)",
+        width: "600px",
+        height: "600px",
+        borderRadius: "50%",
+        border: "1px solid var(--border-light)",
+        pointerEvents: "none",
+      }} />
+      <div className="max-w-7xl mx-auto" style={{ position: "relative" }}>
+        <p className="fade-up" style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "11px",
+          fontWeight: 600,
+          letterSpacing: "0.16em",
+          color: "var(--ink-faint)",
+          textTransform: "uppercase",
+          marginBottom: "24px",
+        }}>
+          Ready to be seen?
+        </p>
+        <h2 className="fade-up delay-1" style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: "clamp(40px, 7vw, 80px)",
+          fontWeight: 700,
+          color: "var(--ink)",
+          lineHeight: "1.1",
+          letterSpacing: "-0.02em",
+          marginBottom: "28px",
+        }}>
+          Your Name.<br />
+          <em style={{ fontStyle: "italic", color: "var(--ink-mid)" }}>Their Front Page.</em>
+        </h2>
+        <p className="fade-up delay-2" style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "17px",
+          color: "var(--ink-light)",
+          maxWidth: "440px",
+          margin: "0 auto 44px",
+          lineHeight: "1.75",
+        }}>
+          One conversation is all it takes. Let&apos;s figure out exactly where you should be featured — and make it happen.
+        </p>
+        <Link
+          className="fade-up delay-3"
+          href="/contact"
+          style={{
+            display: "inline-block",
+            background: "var(--ink)",
+            color: "var(--cream)",
+            padding: "15px 40px",
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 600,
+            fontSize: "14px",
+            letterSpacing: "0.06em",
+            textDecoration: "none",
+            borderRadius: "2px",
+            transition: "background 0.2s, transform 0.2s",
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#2d2a26"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "var(--ink)"; }}
+        >
+          Book a Strategy Call
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+export default function Home() {
+  return (
+    <>
+      <Hero />
+      <Marquee />
+      <Stats />
+      <Services />
+      <FeaturedWork />
+      <Testimonial />
+      <CTA />
     </>
   );
 }
