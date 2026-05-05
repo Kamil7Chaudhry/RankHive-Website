@@ -1,31 +1,23 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Link from "next/link";
+import { motion, useInView } from "framer-motion";
 
-function useFadeUp() {
-  const ref = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.querySelectorAll<HTMLElement>(".fade-up").forEach((c) => c.classList.add("visible"));
-        }
-      },
-      { threshold: 0.1 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return ref;
-}
+const FADE_UP = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } },
+};
+const STAGGER = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
 
 const SERVICES = [
   {
     num: "01",
     title: "Media Placement",
     tagline: "Your story in the publications that matter.",
+    bg: "#FFFFFF",
     desc: "We have established relationships with editors and journalists at Forbes, Inc., Business Insider, Nasdaq, Yahoo Finance, MSN, and 50+ other top-tier outlets. We don't just pitch — we place.",
     includes: [
       "Forbes Council features",
@@ -40,7 +32,8 @@ const SERVICES = [
     num: "02",
     title: "Personal Brand PR",
     tagline: "From unknown to industry authority.",
-    desc: "We build the kind of personal brand that makes people say 'I've seen you everywhere.' Strategic editorial coverage that positions you as the go-to expert in your space.",
+    bg: "#F7F5F2",
+    desc: "Strategic editorial coverage that positions you as the go-to expert in your space. We build the kind of personal brand that makes people say, 'I've seen you everywhere.'",
     includes: [
       "Thought leadership articles",
       "Executive positioning strategy",
@@ -52,8 +45,9 @@ const SERVICES = [
   },
   {
     num: "03",
-    title: "Brand PR & Launch",
+    title: "Launch & Brand PR",
     tagline: "Launch loud. Land everywhere.",
+    bg: "#FFFFFF",
     desc: "Whether you're launching a product, company, or campaign — we build the media strategy that makes it impossible to ignore. From press release to placement.",
     includes: [
       "Launch press campaigns",
@@ -68,6 +62,7 @@ const SERVICES = [
     num: "04",
     title: "Reputation Management",
     tagline: "Own your narrative. Always.",
+    bg: "#F7F5F2",
     desc: "Control what people find when they search your name or brand. We push positive coverage, suppress harmful results, and ensure your digital presence reflects the real you.",
     includes: [
       "Search result optimization",
@@ -80,162 +75,195 @@ const SERVICES = [
   },
 ];
 
-function ServiceCard({ s, i }: { s: typeof SERVICES[0]; i: number }) {
-  const ref = useFadeUp() as React.RefObject<HTMLElement>;
+function ServiceBlock({ s, i }: { s: typeof SERVICES[0]; i: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+
   return (
-    <div
-      ref={ref as React.RefObject<HTMLDivElement>}
-      style={{
-        padding: "80px 0",
-        borderBottom: "1px solid var(--border-light)",
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-        gap: "60px",
-        alignItems: "start",
-      }}
-    >
-      <div>
-        <div className="fade-up" style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "20px" }}>
-          <span style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "12px",
-            fontWeight: 500,
-            color: "var(--ink-faint)",
-            letterSpacing: "0.1em",
-          }}>
-            {s.num}
-          </span>
-          <h2 style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(32px, 4vw, 48px)",
-            fontWeight: 700,
-            color: "var(--ink)",
-            letterSpacing: "-0.02em",
-            lineHeight: "1.15",
-          }}>
-            {s.title}
-          </h2>
-        </div>
-        <p className="fade-up delay-1" style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: "12px",
-          fontWeight: 500,
-          letterSpacing: "0.1em",
-          color: "var(--ink-faint)",
-          textTransform: "uppercase",
-          marginBottom: "18px",
+    <div ref={ref} style={{ background: s.bg, padding: "80px 24px", borderBottom: "1px solid rgba(10,10,10,0.06)" }}>
+      <motion.div
+        style={{ maxWidth: "1280px", margin: "0 auto" }}
+        variants={STAGGER}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+      >
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "60px",
+          alignItems: "start",
         }}>
-          {s.tagline}
-        </p>
-        <p className="fade-up delay-2" style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: "16px",
-          color: "var(--ink-light)",
-          lineHeight: "1.8",
-        }}>
-          {s.desc}
-        </p>
-      </div>
-      <div className="fade-up delay-2">
-        <p style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "0.14em",
-          color: "var(--ink-faint)",
-          textTransform: "uppercase",
-          marginBottom: "16px",
-        }}>
-          Includes
-        </p>
-        <div>
-          {s.includes.map(item => (
-            <div key={item} style={{
-              padding: "13px 0",
-              borderBottom: "1px solid var(--border-light)",
-              display: "flex",
-              gap: "14px",
-              alignItems: "center",
-            }}>
-              <span style={{ color: "var(--green)", fontSize: "13px" }}>✓</span>
+          {/* Left */}
+          <div>
+            <motion.div variants={FADE_UP} style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "16px" }}>
               <span style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: "14px",
-                color: "var(--ink-mid)",
+                fontSize: "11px",
+                fontWeight: 400,
+                color: "rgba(10,10,10,0.25)",
+                letterSpacing: "0.1em",
               }}>
-                {item}
+                {s.num}
               </span>
+              <h2 style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "clamp(32px, 4.5vw, 52px)",
+                fontWeight: 900,
+                color: "#0A0A0A",
+                letterSpacing: "-0.02em",
+                lineHeight: "1.1",
+              }}>
+                {s.title}
+              </h2>
+            </motion.div>
+            <motion.p variants={FADE_UP} style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "11px",
+              fontWeight: 500,
+              letterSpacing: "0.14em",
+              color: "rgba(10,10,10,0.3)",
+              textTransform: "uppercase",
+              marginBottom: "20px",
+            }}>
+              {s.tagline}
+            </motion.p>
+            <motion.p variants={FADE_UP} style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 300,
+              fontSize: "15.5px",
+              color: "rgba(10,10,10,0.5)",
+              lineHeight: "1.8",
+              maxWidth: "420px",
+            }}>
+              {s.desc}
+            </motion.p>
+          </div>
+
+          {/* Right */}
+          <motion.div variants={FADE_UP}>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "10px",
+              fontWeight: 600,
+              letterSpacing: "0.18em",
+              color: "rgba(10,10,10,0.3)",
+              textTransform: "uppercase",
+              marginBottom: "16px",
+            }}>
+              INCLUDES
+            </p>
+            <div>
+              {s.includes.map((item) => (
+                <div
+                  key={item}
+                  style={{
+                    padding: "14px 0",
+                    borderBottom: "1px solid rgba(10,10,10,0.06)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "14px",
+                  }}
+                >
+                  <span style={{
+                    width: 5, height: 5, borderRadius: "50%",
+                    background: "#0A0A0A",
+                    flexShrink: 0,
+                    display: "inline-block",
+                  }} />
+                  <span style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 400,
+                    fontSize: "14px",
+                    color: "rgba(10,10,10,0.6)",
+                  }}>
+                    {item}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
 
-export default function Services() {
-  const heroRef = useFadeUp() as React.RefObject<HTMLElement>;
+function ServicesHero() {
   return (
-    <>
-      {/* Hero */}
-      <section
-        ref={heroRef as React.RefObject<HTMLDivElement>}
-        style={{
-          paddingTop: "140px",
-          paddingBottom: "80px",
-          paddingLeft: "24px",
-          paddingRight: "24px",
-          background: "var(--cream)",
-          borderBottom: "1px solid var(--border-light)",
-        }}
-      >
-        <div className="max-w-7xl mx-auto">
-          <p className="fade-up" style={{
+    <section style={{
+      paddingTop: "148px",
+      paddingBottom: "80px",
+      paddingLeft: "24px",
+      paddingRight: "24px",
+      background: "#FFFFFF",
+      borderBottom: "1px solid rgba(10,10,10,0.06)",
+    }}>
+      <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "11px",
+            fontSize: "10px",
             fontWeight: 600,
-            letterSpacing: "0.16em",
-            color: "var(--ink-faint)",
+            letterSpacing: "0.2em",
+            color: "rgba(10,10,10,0.3)",
             textTransform: "uppercase",
-            marginBottom: "20px",
-          }}>
-            What We Do
-          </p>
-          <h1 className="fade-up delay-1" style={{
+            marginBottom: "24px",
+          }}
+        >
+          WHAT WE DO
+        </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+          style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: "clamp(48px, 8vw, 96px)",
-            fontWeight: 700,
-            color: "var(--ink)",
-            letterSpacing: "-0.02em",
-            lineHeight: "1.05",
-            marginBottom: "32px",
-          }}>
-            Our Services
-          </h1>
-          <p className="fade-up delay-2" style={{
+            fontWeight: 900,
+            color: "#0A0A0A",
+            letterSpacing: "-0.03em",
+            lineHeight: "1.0",
+            marginBottom: "28px",
+          }}
+        >
+          What We Do
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+          style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "18px",
-            color: "var(--ink-light)",
-            maxWidth: "500px",
-            lineHeight: "1.75",
-          }}>
-            Every service we offer has one goal: get you in front of the right people, in the right publications, at the right time.
-          </p>
-        </div>
-      </section>
+            fontWeight: 300,
+            fontSize: "17px",
+            color: "rgba(10,10,10,0.4)",
+            maxWidth: "480px",
+            lineHeight: "1.7",
+          }}
+        >
+          Every service we offer has one goal: get you in front of the right people, in the right publications, at the right time.
+        </motion.p>
+      </div>
+    </section>
+  );
+}
 
-      {/* Services list */}
-      <section style={{ padding: "0 24px 80px", background: "var(--cream)" }}>
-        <div className="max-w-7xl mx-auto">
-          {SERVICES.map((s, i) => (
-            <ServiceCard key={s.num} s={s} i={i} />
-          ))}
-        </div>
-      </section>
+export default function Services() {
+  return (
+    <>
+      <ServicesHero />
+      {SERVICES.map((s, i) => (
+        <ServiceBlock key={s.num} s={s} i={i} />
+      ))}
 
       {/* CTA */}
-      <section style={{ padding: "100px 24px", background: "#1a1814" }}>
-        <div className="max-w-7xl mx-auto" style={{
+      <section style={{ background: "#0A0A0A", padding: "100px 24px" }}>
+        <div style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -245,40 +273,43 @@ export default function Services() {
           <div>
             <h2 style={{
               fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(36px, 5vw, 60px)",
-              fontWeight: 700,
-              color: "#f8f7f4",
-              lineHeight: "1.15",
+              fontSize: "clamp(32px, 5vw, 56px)",
+              fontWeight: 900,
+              color: "#FFFFFF",
+              lineHeight: "1.1",
               letterSpacing: "-0.02em",
-              marginBottom: "16px",
+              marginBottom: "14px",
             }}>
               Not sure where to start?
             </h2>
             <p style={{
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: "16px",
-              color: "rgba(248,247,244,0.5)",
-              maxWidth: "380px",
-              lineHeight: "1.75",
+              fontWeight: 300,
+              fontSize: "15px",
+              color: "rgba(255,255,255,0.4)",
+              maxWidth: "360px",
+              lineHeight: "1.7",
             }}>
               We&apos;ll tell you exactly which service fits your goals. No commitment required.
             </p>
           </div>
-          <Link href="/contact" style={{
-            background: "#f8f7f4",
-            color: "#1a1814",
-            padding: "15px 36px",
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 600,
-            fontSize: "14px",
-            letterSpacing: "0.04em",
-            textDecoration: "none",
-            borderRadius: "2px",
-            display: "inline-block",
-            whiteSpace: "nowrap",
-          }}>
-            Talk to Us →
-          </Link>
+          <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
+            <Link href="/contact" style={{
+              background: "#FFFFFF",
+              color: "#0A0A0A",
+              padding: "14px 32px",
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 500,
+              fontSize: "14px",
+              letterSpacing: "0.02em",
+              textDecoration: "none",
+              display: "inline-block",
+              borderRadius: "2px",
+              whiteSpace: "nowrap",
+            }}>
+              Talk to Us →
+            </Link>
+          </motion.div>
         </div>
       </section>
     </>

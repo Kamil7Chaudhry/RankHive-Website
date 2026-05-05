@@ -1,26 +1,17 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion, useInView } from "framer-motion";
 
-function useFadeUp() {
-  const ref = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.querySelectorAll<HTMLElement>(".fade-up").forEach((c) => c.classList.add("visible"));
-        }
-      },
-      { threshold: 0.1 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return ref;
-}
+const FADE_UP = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } },
+};
+const STAGGER = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
 
 const CASES = [
   {
@@ -30,7 +21,6 @@ const CASES = [
     company: "SK&S Law Group",
     outlet: "Forbes",
     img: "/thomas-forbes.png",
-    tags: ["Personal Brand", "Business Law"],
     result: "Secured a Forbes feature positioning Thomas as a leading authority in business law and corporate finance — driving inbound client inquiries and establishing him as a go-to expert for the media.",
     quote: "Being featured in Forbes completely changed the caliber of clients who reach out to us.",
   },
@@ -41,7 +31,6 @@ const CASES = [
     company: "SK&S Law Group",
     outlet: "Business Insider",
     img: "/sara-bi.png",
-    tags: ["Personal Brand", "M&A Law"],
     result: "Landed a Business Insider feature that positioned Sara as a top M&A attorney, elevating her personal brand and generating new firm visibility across the legal industry.",
     quote: "RankHive went above and beyond. The results speak for themselves.",
   },
@@ -52,7 +41,6 @@ const CASES = [
     company: "Guardian Rock Wealth",
     outlet: "MSN",
     img: "/john-msn.png",
-    tags: ["Finance", "Book Launch"],
     result: "MSN feature amplified John's book launch and positioned him as a leading voice in personal finance — expanding his audience and driving significant book sales.",
     quote: "The MSN placement reached exactly the audience I needed.",
   },
@@ -63,7 +51,6 @@ const CASES = [
     company: "Interlink Capital Strategies",
     outlet: "Yahoo Finance",
     img: "/beard-yahoo.png",
-    tags: ["Finance", "Executive Brand"],
     result: "Secured Yahoo Finance coverage that established Beard as a credible financial expert, building authority in capital markets and attracting new advisory clients.",
     quote: "A single Yahoo Finance article generated more leads than months of other marketing.",
   },
@@ -74,208 +61,192 @@ const CASES = [
     company: "VU Venture Partners",
     outlet: "Nasdaq",
     img: "/skyler-nasdaq.png",
-    tags: ["Venture Capital", "Startup"],
     result: "Nasdaq feature positioned Skyler as a leading VC voice, driving LP interest and deal flow while building his authority in the venture capital ecosystem.",
     quote: "Being on Nasdaq opened doors I didn't even know existed.",
   },
 ];
 
 function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
-  const ref = useFadeUp() as React.RefObject<HTMLElement>;
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   const isEven = i % 2 === 0;
 
   return (
     <div
-      ref={ref as React.RefObject<HTMLDivElement>}
+      ref={ref}
       style={{
+        background: isEven ? "#FFFFFF" : "#F7F5F2",
         padding: "100px 24px",
-        background: i % 2 === 0 ? "var(--cream)" : "#fff",
-        borderBottom: "1px solid var(--border-light)",
+        borderBottom: "1px solid rgba(10,10,10,0.05)",
       }}
     >
-      <div className="max-w-7xl mx-auto">
+      <motion.div
+        style={{ maxWidth: "1280px", margin: "0 auto" }}
+        variants={STAGGER}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+      >
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
           gap: "72px",
           alignItems: "center",
-          direction: isEven ? "ltr" : "rtl",
         }}>
-          {/* Image */}
-          <div
-            className={`fade-up delay-${isEven ? 1 : 2}`}
-            style={{ direction: "ltr" }}
+          {/* Image side */}
+          <motion.div
+            variants={FADE_UP}
+            style={{ order: isEven ? 0 : 1 }}
           >
             <div style={{
               position: "relative",
-              height: "480px",
-              borderRadius: "6px",
+              height: "500px",
               overflow: "hidden",
-              boxShadow: "0 20px 80px rgba(26,24,20,0.1)",
+              boxShadow: "0 24px 80px rgba(0,0,0,0.1)",
             }}>
-              <Image
-                src={c.img}
-                alt={`${c.client} — ${c.outlet}`}
-                fill
-                style={{ objectFit: "cover" }}
-              />
-              {/* Overlay badge */}
+              <Image src={c.img} alt={`${c.client} — ${c.outlet}`} fill style={{ objectFit: "cover" }} />
+              {/* Outlet badge */}
               <div style={{
                 position: "absolute",
                 top: "20px",
                 left: "20px",
-                background: "#fff",
-                borderRadius: "100px",
+                background: "#FFFFFF",
                 padding: "6px 14px",
-                boxShadow: "0 4px 16px rgba(26,24,20,0.1)",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
               }}>
-                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--green)", display: "inline-block" }} />
+                <span style={{
+                  width: 5, height: 5, borderRadius: "50%",
+                  background: "#2d7a4f",
+                  display: "inline-block",
+                }} />
                 <span style={{
                   fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "11px",
+                  fontSize: "10px",
                   fontWeight: 700,
-                  color: "var(--ink)",
-                  letterSpacing: "0.08em",
+                  color: "#0A0A0A",
+                  letterSpacing: "0.14em",
                   textTransform: "uppercase",
                 }}>
                   {c.outlet}
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Text */}
-          <div
-            className={`fade-up delay-${isEven ? 2 : 1}`}
-            style={{ direction: "ltr" }}
-          >
-            <p style={{
+          {/* Text side */}
+          <div style={{ order: isEven ? 1 : 0 }}>
+            <motion.p variants={FADE_UP} style={{
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: "12px",
+              fontSize: "10px",
               fontWeight: 600,
-              letterSpacing: "0.12em",
-              color: "var(--ink-faint)",
+              letterSpacing: "0.2em",
+              color: "rgba(10,10,10,0.3)",
               textTransform: "uppercase",
-              marginBottom: "8px",
+              marginBottom: "12px",
             }}>
               Case Study {c.num}
-            </p>
+            </motion.p>
 
-            <h2 style={{
+            <motion.h2 variants={FADE_UP} style={{
               fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(32px, 4vw, 52px)",
-              fontWeight: 700,
-              color: "var(--ink)",
+              fontSize: "clamp(34px, 4.5vw, 56px)",
+              fontWeight: 900,
+              color: "#0A0A0A",
               letterSpacing: "-0.02em",
-              lineHeight: "1.15",
-              marginBottom: "8px",
+              lineHeight: "1.1",
+              marginBottom: "10px",
             }}>
               {c.client}
-            </h2>
+            </motion.h2>
 
-            <p style={{
+            <motion.p variants={FADE_UP} style={{
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: "15px",
-              color: "var(--ink-light)",
+              fontSize: "14px",
+              color: "rgba(10,10,10,0.4)",
               marginBottom: "4px",
             }}>
               {c.role}
-            </p>
-            <p style={{
+            </motion.p>
+            <motion.p variants={FADE_UP} style={{
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: "15px",
-              fontWeight: 500,
-              color: "var(--ink-faint)",
+              fontSize: "13px",
+              color: "rgba(10,10,10,0.28)",
               marginBottom: "28px",
             }}>
               {c.company}
-            </p>
+            </motion.p>
 
-            {/* Tags */}
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "28px" }}>
+            {/* Thin rule */}
+            <motion.div variants={FADE_UP} style={{
+              width: "32px",
+              height: "1px",
+              background: "#0A0A0A",
+              marginBottom: "24px",
+            }} />
+
+            {/* Outlet badge */}
+            <motion.div variants={FADE_UP} style={{ marginBottom: "28px" }}>
               <span style={{
-                padding: "5px 14px",
-                background: "var(--ink)",
-                color: "var(--cream)",
-                borderRadius: "100px",
+                background: "#0A0A0A",
+                color: "#fff",
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: "11px",
+                fontSize: "9px",
                 fontWeight: 600,
-                letterSpacing: "0.08em",
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
+                padding: "5px 12px",
+                display: "inline-block",
               }}>
-                {c.outlet}
+                Featured in {c.outlet}
               </span>
-              {c.tags.map(tag => (
-                <span key={tag} style={{
-                  padding: "5px 14px",
-                  border: "1px solid var(--border)",
-                  color: "var(--ink-light)",
-                  borderRadius: "100px",
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "11px",
-                  fontWeight: 500,
-                  letterSpacing: "0.06em",
-                }}>
-                  {tag}
-                </span>
-              ))}
-            </div>
+            </motion.div>
 
             {/* Result */}
-            <div style={{
-              borderLeft: "3px solid var(--border)",
-              paddingLeft: "20px",
+            <motion.p variants={FADE_UP} style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 300,
+              fontSize: "15px",
+              color: "rgba(10,10,10,0.5)",
+              lineHeight: "1.8",
               marginBottom: "28px",
             }}>
-              <p style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "15px",
-                color: "var(--ink-light)",
-                lineHeight: "1.8",
-              }}>
-                {c.result}
-              </p>
-            </div>
+              {c.result}
+            </motion.p>
 
-            {/* Mini quote */}
-            <p style={{
+            {/* Quote */}
+            <motion.p variants={FADE_UP} style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: "17px",
               fontStyle: "italic",
-              color: "var(--ink-mid)",
-              lineHeight: "1.6",
+              fontWeight: 700,
+              color: "rgba(10,10,10,0.7)",
+              lineHeight: "1.65",
+              borderLeft: "2px solid rgba(10,10,10,0.1)",
+              paddingLeft: "16px",
             }}>
               &ldquo;{c.quote}&rdquo;
-            </p>
+            </motion.p>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
 
-export default function Work() {
-  const heroRef = useFadeUp() as React.RefObject<HTMLElement>;
-
+function WorkHero() {
   return (
-    <>
-      {/* Hero */}
-      <section
-        ref={heroRef as React.RefObject<HTMLDivElement>}
-        style={{
-          paddingTop: "140px",
-          paddingBottom: "80px",
-          paddingLeft: "24px",
-          paddingRight: "24px",
-          background: "var(--cream)",
-          borderBottom: "1px solid var(--border-light)",
-        }}
-      >
-        <div className="max-w-7xl mx-auto" style={{
+    <section style={{
+      paddingTop: "148px",
+      paddingBottom: "72px",
+      paddingLeft: "24px",
+      paddingRight: "24px",
+      background: "#FFFFFF",
+      borderBottom: "1px solid rgba(10,10,10,0.06)",
+    }}>
+      <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
+        <div style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-end",
@@ -283,169 +254,161 @@ export default function Work() {
           gap: "32px",
         }}>
           <div>
-            <p className="fade-up" style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: "0.16em",
-              color: "var(--ink-faint)",
-              textTransform: "uppercase",
-              marginBottom: "20px",
-            }}>
-              Real Clients. Real Placements.
-            </p>
-            <h1 className="fade-up delay-1" style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(48px, 8vw, 96px)",
-              fontWeight: 700,
-              color: "var(--ink)",
-              letterSpacing: "-0.02em",
-              lineHeight: "1.05",
-            }}>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: "10px",
+                fontWeight: 600,
+                letterSpacing: "0.2em",
+                color: "rgba(10,10,10,0.3)",
+                textTransform: "uppercase",
+                marginBottom: "20px",
+              }}
+            >
+              REAL CLIENTS. REAL PLACEMENTS.
+            </motion.p>
+            <motion.h1
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "clamp(48px, 8vw, 96px)",
+                fontWeight: 900,
+                color: "#0A0A0A",
+                letterSpacing: "-0.03em",
+                lineHeight: "1.0",
+              }}
+            >
               Our Work
-            </h1>
+            </motion.h1>
           </div>
-          <p className="fade-up delay-2" style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "17px",
-            color: "var(--ink-light)",
-            maxWidth: "340px",
-            lineHeight: "1.75",
-          }}>
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.7 }}
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 300,
+              fontSize: "16px",
+              color: "rgba(10,10,10,0.38)",
+              maxWidth: "320px",
+              lineHeight: "1.7",
+            }}
+          >
             From attorneys to venture capitalists — real people placed in real publications.
-          </p>
+          </motion.p>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* Case studies */}
+function WorkTestimonial() {
+  return (
+    <section style={{ background: "#0A0A0A", padding: "100px 24px" }}>
+      <div style={{ maxWidth: "720px", margin: "0 auto", textAlign: "center" }}>
+        <p style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "10px",
+          fontWeight: 600,
+          letterSpacing: "0.2em",
+          color: "rgba(255,255,255,0.25)",
+          textTransform: "uppercase",
+          marginBottom: "40px",
+        }}>
+          WHAT CLIENTS SAY
+        </p>
+        <p style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: "clamp(17px, 2.2vw, 22px)",
+          fontStyle: "italic",
+          fontWeight: 700,
+          color: "rgba(255,255,255,0.82)",
+          lineHeight: "1.8",
+          marginBottom: "40px",
+        }}>
+          &ldquo;RankHive was responsive, professional, and diligent. I&apos;m very very impressed. The team went above and beyond my expectations to deliver impressive results. If you&apos;re thinking of working with them, I am positive you&apos;ll be pleased. Don&apos;t let this one get away.&rdquo;
+        </p>
+        <p style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: "20px",
+          fontWeight: 700,
+          color: "#FFFFFF",
+          marginBottom: "4px",
+        }}>
+          Sara Sharp
+        </p>
+        <p style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "13px",
+          color: "rgba(255,255,255,0.3)",
+          marginBottom: "14px",
+        }}>
+          Co-Founder & M&A Attorney, SK&S Law Group
+        </p>
+        <div style={{ display: "flex", gap: "2px", justifyContent: "center" }}>
+          {[1,2,3,4,5].map(s => (
+            <span key={s} style={{ color: "#d4ac0d", fontSize: "14px" }}>★</span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function Work() {
+  return (
+    <>
+      <WorkHero />
       {CASES.map((c, i) => (
         <CaseStudy key={c.num} c={c} i={i} />
       ))}
-
-      {/* Testimonial */}
-      <section style={{ padding: "100px 24px", background: "#1a1814" }}>
-        <div className="max-w-7xl mx-auto">
-          <p style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "11px",
-            fontWeight: 600,
-            letterSpacing: "0.16em",
-            color: "rgba(248,247,244,0.3)",
-            textTransform: "uppercase",
-            marginBottom: "44px",
-            textAlign: "center",
-          }}>
-            What Clients Say
-          </p>
-          <div style={{ maxWidth: "720px", margin: "0 auto", textAlign: "center" }}>
-            <p style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(18px, 2.5vw, 24px)",
-              fontStyle: "italic",
-              color: "rgba(248,247,244,0.85)",
-              lineHeight: "1.8",
-              marginBottom: "40px",
-            }}>
-              &ldquo;RankHive was responsive, professional, and diligent. I&apos;m very very impressed. The team went above and beyond my expectations to deliver impressive results. If you&apos;re thinking of working with them, I am positive you&apos;ll be pleased. Don&apos;t let this one get away.&rdquo;
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-              <p style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "20px",
-                fontWeight: 600,
-                color: "#f8f7f4",
-              }}>
-                Sara Sharp
-              </p>
-              <p style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "13px",
-                color: "rgba(248,247,244,0.4)",
-              }}>
-                Co-Founder & M&A Attorney, SK&S Law Group
-              </p>
-              <div style={{ marginTop: "12px", display: "flex", gap: "3px" }}>
-                {[1,2,3,4,5].map(s => (
-                  <span key={s} style={{ color: "#d4ac0d", fontSize: "16px" }}>★</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Publications */}
-      <section style={{ padding: "64px 24px", background: "var(--cream-dark)", borderTop: "1px solid var(--border-light)" }}>
-        <div className="max-w-7xl mx-auto">
-          <p style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "11px",
-            fontWeight: 600,
-            letterSpacing: "0.14em",
-            color: "var(--ink-faint)",
-            textTransform: "uppercase",
-            textAlign: "center",
-            marginBottom: "32px",
-          }}>
-            Our clients have been featured in
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center" }}>
-            {["Forbes", "Business Insider", "MSN", "Yahoo Finance", "Nasdaq", "Inc.", "Entrepreneur", "TechCrunch", "Fortune", "Bloomberg"].map(pub => (
-              <span key={pub} style={{
-                padding: "10px 20px",
-                border: "1px solid var(--border)",
-                borderRadius: "100px",
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "13px",
-                fontWeight: 500,
-                color: "var(--ink-mid)",
-                background: "#fff",
-              }}>
-                {pub}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
+      <WorkTestimonial />
 
       {/* CTA */}
-      <section style={{ padding: "100px 24px", background: "var(--cream)" }}>
-        <div className="max-w-7xl mx-auto" style={{ textAlign: "center" }}>
+      <section style={{ background: "#F7F5F2", padding: "100px 24px", textAlign: "center" }}>
+        <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
           <h2 style={{
             fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(36px, 6vw, 72px)",
-            fontWeight: 700,
-            color: "var(--ink)",
-            lineHeight: "1.1",
-            letterSpacing: "-0.02em",
+            fontSize: "clamp(40px, 7vw, 80px)",
+            fontWeight: 900,
+            color: "#0A0A0A",
+            lineHeight: "1.0",
+            letterSpacing: "-0.03em",
             marginBottom: "24px",
           }}>
             Your story goes<br />
-            <em style={{ fontStyle: "italic", color: "var(--ink-mid)" }}>here next.</em>
+            <em style={{ color: "rgba(10,10,10,0.35)" }}>here next.</em>
           </h2>
           <p style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: "17px",
-            color: "var(--ink-light)",
+            fontWeight: 300,
+            fontSize: "15px",
+            color: "rgba(10,10,10,0.4)",
             marginBottom: "40px",
-            lineHeight: "1.75",
           }}>
             Ready to get featured?
           </p>
-          <Link href="/contact" style={{
-            background: "var(--ink)",
-            color: "var(--cream)",
-            padding: "15px 40px",
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 600,
-            fontSize: "14px",
-            letterSpacing: "0.04em",
-            textDecoration: "none",
-            borderRadius: "2px",
-            display: "inline-block",
-          }}>
-            Let&apos;s Talk →
-          </Link>
+          <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.2 }} style={{ display: "inline-block" }}>
+            <Link href="/contact" style={{
+              background: "#0A0A0A",
+              color: "#FFFFFF",
+              padding: "14px 36px",
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 500,
+              fontSize: "14px",
+              letterSpacing: "0.02em",
+              textDecoration: "none",
+              display: "inline-block",
+              borderRadius: "2px",
+            }}>
+              Let&apos;s Talk →
+            </Link>
+          </motion.div>
         </div>
       </section>
     </>

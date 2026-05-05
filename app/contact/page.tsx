@@ -1,30 +1,41 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
-function useFadeUp() {
-  const ref = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.querySelectorAll<HTMLElement>(".fade-up").forEach((c) => c.classList.add("visible"));
-        }
-      },
-      { threshold: 0.1 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return ref;
-}
+const FADE_UP = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } },
+};
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  background: "transparent",
+  border: "none",
+  borderBottom: "1.5px solid rgba(10,10,10,0.12)",
+  padding: "14px 0",
+  fontFamily: "'DM Sans', sans-serif",
+  fontWeight: 300,
+  fontSize: "15px",
+  color: "#0A0A0A",
+  outline: "none",
+  borderRadius: 0,
+  transition: "border-color 0.2s",
+};
+
+const labelStyle: React.CSSProperties = {
+  fontFamily: "'DM Sans', sans-serif",
+  fontSize: "10px",
+  fontWeight: 600,
+  letterSpacing: "0.18em",
+  color: "rgba(10,10,10,0.3)",
+  textTransform: "uppercase",
+  display: "block",
+  marginBottom: "8px",
+};
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", company: "", email: "", goal: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
-  const heroRef = useFadeUp() as React.RefObject<HTMLElement>;
-  const formRef = useFadeUp() as React.RefObject<HTMLElement>;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -35,112 +46,106 @@ export default function Contact() {
     setSubmitted(true);
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    background: "transparent",
-    border: "none",
-    borderBottom: "1.5px solid var(--border)",
-    padding: "14px 0",
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: "15px",
-    color: "var(--ink)",
-    outline: "none",
-    transition: "border-color 0.2s",
+  const focusIn = (e: React.FocusEvent<HTMLElement>) => {
+    (e.currentTarget as HTMLElement).style.borderColor = "#0A0A0A";
   };
-
-  const labelStyle: React.CSSProperties = {
-    fontFamily: "'DM Sans', sans-serif",
-    fontSize: "11px",
-    fontWeight: 600,
-    letterSpacing: "0.13em",
-    color: "var(--ink-faint)",
-    textTransform: "uppercase",
-    display: "block",
-    marginBottom: "8px",
+  const focusOut = (e: React.FocusEvent<HTMLElement>) => {
+    (e.currentTarget as HTMLElement).style.borderColor = "rgba(10,10,10,0.12)";
   };
 
   return (
     <>
       {/* Hero */}
-      <section
-        ref={heroRef as React.RefObject<HTMLDivElement>}
-        style={{
-          paddingTop: "140px",
-          paddingBottom: "80px",
-          paddingLeft: "24px",
-          paddingRight: "24px",
-          background: "var(--cream)",
-          borderBottom: "1px solid var(--border-light)",
-        }}
-      >
-        <div className="max-w-7xl mx-auto">
-          <p className="fade-up" style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "11px",
-            fontWeight: 600,
-            letterSpacing: "0.16em",
-            color: "var(--ink-faint)",
-            textTransform: "uppercase",
-            marginBottom: "20px",
-          }}>
-            Get In Touch
-          </p>
-          <h1 className="fade-up delay-1" style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: "clamp(44px, 8vw, 96px)",
-            fontWeight: 700,
-            color: "var(--ink)",
-            letterSpacing: "-0.02em",
-            lineHeight: "1.05",
-          }}>
+      <section style={{
+        paddingTop: "148px",
+        paddingBottom: "80px",
+        paddingLeft: "24px",
+        paddingRight: "24px",
+        background: "#FFFFFF",
+        borderBottom: "1px solid rgba(10,10,10,0.06)",
+      }}>
+        <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "10px",
+              fontWeight: 600,
+              letterSpacing: "0.2em",
+              color: "rgba(10,10,10,0.3)",
+              textTransform: "uppercase",
+              marginBottom: "20px",
+            }}
+          >
+            GET IN TOUCH
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(44px, 8vw, 96px)",
+              fontWeight: 900,
+              color: "#0A0A0A",
+              letterSpacing: "-0.03em",
+              lineHeight: "1.0",
+            }}
+          >
             Let&apos;s get you<br />
-            <em style={{ fontStyle: "italic", color: "var(--ink-mid)" }}>featured.</em>
-          </h1>
+            <em style={{ color: "rgba(10,10,10,0.3)" }}>featured.</em>
+          </motion.h1>
         </div>
       </section>
 
       {/* Body */}
-      <section
-        ref={formRef as React.RefObject<HTMLDivElement>}
-        style={{ padding: "80px 24px 120px", background: "var(--cream)" }}
-      >
-        <div className="max-w-7xl mx-auto" style={{
+      <section style={{ padding: "80px 24px 120px", background: "#FFFFFF" }}>
+        <div style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
           gap: "100px",
         }}>
           {/* Left info */}
-          <div>
-            <p className="fade-up" style={{
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
+          >
+            <motion.p variants={FADE_UP} style={{
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: "17px",
-              color: "var(--ink-light)",
+              fontWeight: 300,
+              fontSize: "16px",
+              color: "rgba(10,10,10,0.45)",
               lineHeight: "1.8",
-              marginBottom: "60px",
-              maxWidth: "340px",
+              marginBottom: "56px",
+              maxWidth: "320px",
             }}>
               Fill out the form and we&apos;ll get back to you within 24 hours with a media strategy tailored to your goals.
-            </p>
+            </motion.p>
 
-            <div className="fade-up delay-1" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-              <div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+              <motion.div variants={FADE_UP}>
                 <p style={labelStyle}>Email</p>
-                <a
-                  href="mailto:hello@rankhive.com"
-                  style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "16px",
-                    color: "var(--ink-mid)",
-                    textDecoration: "none",
-                    transition: "color 0.2s",
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--ink)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--ink-mid)"; }}
+                <a href="mailto:hello@rankhive.com" style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "15px",
+                  fontWeight: 400,
+                  color: "rgba(10,10,10,0.55)",
+                  textDecoration: "none",
+                  transition: "color 0.2s",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#0A0A0A"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(10,10,10,0.55)"; }}
                 >
                   hello@rankhive.com
                 </a>
-              </div>
-              <div>
+              </motion.div>
+
+              <motion.div variants={FADE_UP}>
                 <p style={labelStyle}>LinkedIn</p>
                 <a
                   href="https://www.linkedin.com/company/rankhive"
@@ -148,80 +153,95 @@ export default function Contact() {
                   rel="noreferrer"
                   style={{
                     fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "16px",
-                    color: "var(--ink-mid)",
+                    fontSize: "15px",
+                    fontWeight: 400,
+                    color: "rgba(10,10,10,0.55)",
                     textDecoration: "none",
                     transition: "color 0.2s",
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--ink)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--ink-mid)"; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#0A0A0A"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(10,10,10,0.55)"; }}
                 >
                   linkedin.com/company/rankhive ↗
                 </a>
-              </div>
+              </motion.div>
             </div>
 
-            <div className="fade-up delay-2" style={{
+            <motion.div variants={FADE_UP} style={{
               marginTop: "48px",
-              padding: "30px",
-              border: "1px solid var(--border-light)",
-              borderRadius: "6px",
-              background: "#fff",
+              padding: "32px",
+              border: "1px solid rgba(10,10,10,0.08)",
+              background: "#F7F5F2",
             }}>
               <p style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: "28px",
-                fontWeight: 600,
-                color: "var(--ink)",
+                fontWeight: 700,
+                color: "#0A0A0A",
                 marginBottom: "10px",
+                letterSpacing: "-0.01em",
               }}>
                 24H Response
               </p>
               <p style={{
                 fontFamily: "'DM Sans', sans-serif",
+                fontWeight: 300,
                 fontSize: "14px",
-                color: "var(--ink-light)",
+                color: "rgba(10,10,10,0.45)",
                 lineHeight: "1.75",
               }}>
                 We respond to every inquiry within one business day with a clear next step — no gatekeeping.
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Form */}
-          <div className="fade-up delay-1">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+          >
             {submitted ? (
               <div style={{ textAlign: "center", padding: "80px 0" }}>
-                <div style={{
-                  width: 72, height: 72,
-                  borderRadius: "50%",
-                  background: "var(--green-bg)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  margin: "0 auto 24px",
-                }}>
-                  <span style={{ fontSize: "28px", color: "var(--green)" }}>✓</span>
-                </div>
+                <motion.div
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 16 }}
+                  style={{
+                    width: 72, height: 72,
+                    border: "1.5px solid rgba(10,10,10,0.12)",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto 24px",
+                  }}
+                >
+                  <span style={{ fontSize: "24px", color: "#0A0A0A" }}>✓</span>
+                </motion.div>
                 <h2 style={{
                   fontFamily: "'Playfair Display', serif",
                   fontSize: "36px",
-                  fontWeight: 700,
-                  color: "var(--ink)",
+                  fontWeight: 900,
+                  color: "#0A0A0A",
                   marginBottom: "14px",
+                  letterSpacing: "-0.02em",
                 }}>
                   Message sent.
                 </h2>
                 <p style={{
                   fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "16px",
-                  color: "var(--ink-light)",
-                  lineHeight: "1.75",
+                  fontWeight: 300,
+                  fontSize: "15px",
+                  color: "rgba(10,10,10,0.45)",
+                  lineHeight: "1.7",
                 }}>
                   We&apos;ll be in touch within 24 hours with your custom media strategy.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
                   <div>
                     <label htmlFor="name" style={labelStyle}>Full Name *</label>
                     <input
@@ -229,8 +249,8 @@ export default function Contact() {
                       value={form.name} onChange={handleChange}
                       placeholder="Jane Smith"
                       style={inputStyle}
-                      onFocus={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--ink)"; }}
-                      onBlur={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; }}
+                      onFocus={focusIn as React.FocusEventHandler<HTMLInputElement>}
+                      onBlur={focusOut as React.FocusEventHandler<HTMLInputElement>}
                     />
                   </div>
                   <div>
@@ -240,11 +260,12 @@ export default function Contact() {
                       value={form.company} onChange={handleChange}
                       placeholder="Acme Corp"
                       style={inputStyle}
-                      onFocus={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--ink)"; }}
-                      onBlur={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; }}
+                      onFocus={focusIn as React.FocusEventHandler<HTMLInputElement>}
+                      onBlur={focusOut as React.FocusEventHandler<HTMLInputElement>}
                     />
                   </div>
                 </div>
+
                 <div>
                   <label htmlFor="email" style={labelStyle}>Email *</label>
                   <input
@@ -252,18 +273,19 @@ export default function Contact() {
                     value={form.email} onChange={handleChange}
                     placeholder="jane@company.com"
                     style={inputStyle}
-                    onFocus={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--ink)"; }}
-                    onBlur={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; }}
+                    onFocus={focusIn as React.FocusEventHandler<HTMLInputElement>}
+                    onBlur={focusOut as React.FocusEventHandler<HTMLInputElement>}
                   />
                 </div>
+
                 <div>
                   <label htmlFor="goal" style={labelStyle}>Primary Goal *</label>
                   <select
                     id="goal" name="goal" required
                     value={form.goal} onChange={handleChange}
-                    style={{ ...inputStyle, cursor: "pointer" }}
-                    onFocus={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--ink)"; }}
-                    onBlur={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; }}
+                    style={{ ...inputStyle, cursor: "pointer", appearance: "none" }}
+                    onFocus={focusIn as React.FocusEventHandler<HTMLSelectElement>}
+                    onBlur={focusOut as React.FocusEventHandler<HTMLSelectElement>}
                   >
                     <option value="">Select your goal</option>
                     <option value="Forbes/Inc. feature">Get featured in Forbes / Inc.</option>
@@ -274,6 +296,7 @@ export default function Contact() {
                     <option value="Other">Other</option>
                   </select>
                 </div>
+
                 <div>
                   <label htmlFor="message" style={labelStyle}>Tell us about yourself</label>
                   <textarea
@@ -282,35 +305,36 @@ export default function Contact() {
                     rows={4}
                     placeholder="What are you working on? What does success look like?"
                     style={{ ...inputStyle, resize: "vertical", lineHeight: "1.6" }}
-                    onFocus={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--ink)"; }}
-                    onBlur={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; }}
+                    onFocus={focusIn as React.FocusEventHandler<HTMLTextAreaElement>}
+                    onBlur={focusOut as React.FocusEventHandler<HTMLTextAreaElement>}
                   />
                 </div>
+
                 <div>
-                  <button
+                  <motion.button
                     type="submit"
+                    whileHover={{ y: -2, boxShadow: "0 12px 32px rgba(10,10,10,0.15)" }}
+                    transition={{ duration: 0.2 }}
                     style={{
-                      background: "var(--ink)",
-                      color: "var(--cream)",
-                      padding: "15px 36px",
+                      background: "#0A0A0A",
+                      color: "#FFFFFF",
+                      padding: "14px 36px",
                       fontFamily: "'DM Sans', sans-serif",
-                      fontWeight: 600,
+                      fontWeight: 500,
                       fontSize: "14px",
-                      letterSpacing: "0.04em",
+                      letterSpacing: "0.02em",
                       border: "none",
                       cursor: "pointer",
                       borderRadius: "2px",
-                      transition: "background 0.2s",
+                      display: "inline-block",
                     }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#2d2a26"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "var(--ink)"; }}
                   >
                     Send Message →
-                  </button>
+                  </motion.button>
                 </div>
               </form>
             )}
-          </div>
+          </motion.div>
         </div>
       </section>
     </>

@@ -1,82 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --cream: #f8f7f4;
-  --cream-dark: #f0ede6;
-  --ink: #1a1814;
-  --ink-mid: #3d3a35;
-  --ink-light: #6b6760;
-  --ink-faint: #9c9890;
-  --border: rgba(26, 24, 20, 0.1);
-  --border-light: rgba(26, 24, 20, 0.06);
-  --green: #2d6a4f;
-  --green-bg: #d8f3dc;
+  --black: #0A0A0A;
+  --white: #FFFFFF;
+  --off-white: #F7F5F2;
+  --muted: rgba(10, 10, 10, 0.38);
+  --border: rgba(10, 10, 10, 0.09);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--cream);
-  color: var(--ink);
+  background: #FFFFFF;
+  color: #0A0A0A;
   font-family: 'DM Sans', sans-serif;
-  font-weight: 400;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: var(--cream); }
-::-webkit-scrollbar-thumb { background: var(--ink-faint); }
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: #fff; }
+::-webkit-scrollbar-thumb { background: rgba(10,10,10,0.15); }
 
-/* Scroll-triggered fade-up */
-.fade-up {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.fade-up.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.fade-up.delay-1 { transition-delay: 0.1s; }
-.fade-up.delay-2 { transition-delay: 0.2s; }
-.fade-up.delay-3 { transition-delay: 0.3s; }
-.fade-up.delay-4 { transition-delay: 0.4s; }
-.fade-up.delay-5 { transition-delay: 0.5s; }
-
-/* Marquee */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.marquee-track { animation: marquee 28s linear infinite; }
-
-/* Card hover lift */
-.card-hover {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.card-hover:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 60px rgba(26, 24, 20, 0.12);
-}
-
-/* Nav link underline */
+/* Nav underline */
 .nav-link {
   position: relative;
+  text-decoration: none;
 }
 .nav-link::after {
   content: '';
   position: absolute;
   bottom: -2px; left: 0;
   width: 0; height: 1px;
-  background: currentColor;
-  transition: width 0.3s ease;
+  background: #0A0A0A;
+  transition: width 0.25s ease;
 }
-.nav-link:hover::after { width: 100%; }
+.nav-link:hover::after,
 .nav-link.active::after { width: 100%; }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
