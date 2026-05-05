@@ -1,7 +1,6 @@
 "use client";
 import { useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 
 const FADE_UP = {
@@ -161,12 +160,10 @@ function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
               overflow: "hidden",
               boxShadow: "0 24px 80px rgba(0,0,0,0.1)",
             }}>
-              <Image
+              <img
                 src={c.img}
                 alt={`${c.client} — ${c.outlet}`}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                style={{ objectFit: "cover" }}
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
               />
               <div style={{
                 position: "absolute",

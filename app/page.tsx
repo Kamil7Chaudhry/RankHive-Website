@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 
 /* ─── Shared animation variants ─────────────────────── */
@@ -481,7 +480,7 @@ function Testimonial() {
               overflow: "hidden",
             }}
           >
-            <Image src="/sara-bi.png" alt="Sara Sharp" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover", objectPosition: "center top" }} />
+            <img src="/sara-bi.png" alt="Sara Sharp" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
             <div style={{
               position: "absolute",
               inset: 0,
