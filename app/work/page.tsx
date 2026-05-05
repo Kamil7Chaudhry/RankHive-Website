@@ -19,7 +19,7 @@ const CASES = [
     role: "Business Attorney & Co-Founder",
     company: "SK&S Law Group",
     outlet: "Forbes",
-    img: "/thomas-forbes.png",
+    img: "",
     result: "Secured a Forbes feature positioning Thomas as a leading authority in business law and corporate finance — driving inbound client inquiries and establishing him as a go-to expert for the media.",
     quote: "Being featured in Forbes completely changed the caliber of clients who reach out to us.",
   },
@@ -39,7 +39,7 @@ const CASES = [
     role: "Financial Advisor & Author",
     company: "Guardian Rock Wealth",
     outlet: "MSN",
-    img: "/john-msn.png",
+    img: "",
     result: "MSN feature amplified John's book launch and positioned him as a leading voice in personal finance — expanding his audience and driving significant book sales.",
     quote: "The MSN placement reached exactly the audience I needed.",
   },
@@ -49,7 +49,7 @@ const CASES = [
     role: "Managing Director & CEO",
     company: "Interlink Capital Strategies",
     outlet: "Yahoo Finance",
-    img: "/beard-yahoo.png",
+    img: "",
     result: "Secured Yahoo Finance coverage that established Beard as a credible financial expert, building authority in capital markets and attracting new advisory clients.",
     quote: "A single Yahoo Finance article generated more leads than months of other marketing.",
   },
@@ -59,7 +59,7 @@ const CASES = [
     role: "Founder & General Partner",
     company: "VU Venture Partners",
     outlet: "Nasdaq",
-    img: "/skyler-nasdaq.png",
+    img: "",
     result: "Nasdaq feature positioned Skyler as a leading VC voice, driving LP interest and deal flow while building his authority in the venture capital ecosystem.",
     quote: "Being on Nasdaq opened doors I didn't even know existed.",
   },
@@ -141,11 +141,54 @@ function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
               overflow: "hidden",
               boxShadow: "0 24px 80px rgba(0,0,0,0.1)",
             }}>
-              <img
-                src={c.img}
-                alt={`${c.client} — ${c.outlet}`}
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-              />
+              {c.img ? (
+                <img
+                  src={c.img}
+                  alt={`${c.client} — ${c.outlet}`}
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <div style={{
+                  position: "absolute", inset: 0,
+                  background: "#1a1a1a",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                }}>
+                  {/* Ghost publication name — decorative background text */}
+                  <span style={{
+                    position: "absolute",
+                    fontFamily: "'Playfair Display', serif",
+                    fontStyle: "italic",
+                    fontWeight: 900,
+                    fontSize: "clamp(52px, 9vw, 88px)",
+                    color: "rgba(255,255,255,0.09)",
+                    letterSpacing: "-0.03em",
+                    lineHeight: 1,
+                    textAlign: "center",
+                    padding: "0 24px",
+                    userSelect: "none",
+                    whiteSpace: "nowrap",
+                  }}>
+                    {c.outlet}
+                  </span>
+                  {/* Centered client name */}
+                  <p style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontSize: "clamp(20px, 2.5vw, 28px)",
+                    fontWeight: 700,
+                    color: "rgba(255,255,255,0.88)",
+                    textAlign: "center",
+                    zIndex: 1,
+                    letterSpacing: "-0.01em",
+                    lineHeight: 1.2,
+                    padding: "0 24px",
+                  }}>
+                    {c.client}
+                  </p>
+                </div>
+              )}
               <div style={{
                 position: "absolute",
                 top: "20px",
