@@ -141,54 +141,44 @@ function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
               overflow: "hidden",
               boxShadow: "0 24px 80px rgba(0,0,0,0.1)",
             }}>
-              {c.img ? (
-                <img
-                  src={c.img}
-                  alt={`${c.client} — ${c.outlet}`}
-                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              ) : (
-                <div style={{
-                  position: "absolute", inset: 0,
-                  background: "#1a1a1a",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  overflow: "hidden",
+              <div style={{
+                position: "absolute", inset: 0,
+                background: "#111111",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}>
+                <span style={{
+                  position: "absolute",
+                  fontFamily: "'Playfair Display', serif",
+                  fontStyle: "italic",
+                  fontWeight: 900,
+                  fontSize: "clamp(52px, 9vw, 88px)",
+                  color: "rgba(255,255,255,0.08)",
+                  letterSpacing: "-0.03em",
+                  lineHeight: 1,
+                  textAlign: "center",
+                  padding: "0 24px",
+                  userSelect: "none",
+                  whiteSpace: "nowrap",
                 }}>
-                  {/* Ghost publication name — decorative background text */}
-                  <span style={{
-                    position: "absolute",
-                    fontFamily: "'Playfair Display', serif",
-                    fontStyle: "italic",
-                    fontWeight: 900,
-                    fontSize: "clamp(52px, 9vw, 88px)",
-                    color: "rgba(255,255,255,0.09)",
-                    letterSpacing: "-0.03em",
-                    lineHeight: 1,
-                    textAlign: "center",
-                    padding: "0 24px",
-                    userSelect: "none",
-                    whiteSpace: "nowrap",
-                  }}>
-                    {c.outlet}
-                  </span>
-                  {/* Centered client name */}
-                  <p style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontSize: "clamp(20px, 2.5vw, 28px)",
-                    fontWeight: 700,
-                    color: "rgba(255,255,255,0.88)",
-                    textAlign: "center",
-                    zIndex: 1,
-                    letterSpacing: "-0.01em",
-                    lineHeight: 1.2,
-                    padding: "0 24px",
-                  }}>
-                    {c.client}
-                  </p>
-                </div>
-              )}
+                  {c.outlet}
+                </span>
+                <p style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "clamp(20px, 2.5vw, 28px)",
+                  fontWeight: 700,
+                  color: "rgba(255,255,255,0.88)",
+                  textAlign: "center",
+                  zIndex: 1,
+                  letterSpacing: "-0.01em",
+                  lineHeight: 1.2,
+                  padding: "0 24px",
+                }}>
+                  {c.client}
+                </p>
+              </div>
               <div style={{
                 position: "absolute",
                 top: "20px",
