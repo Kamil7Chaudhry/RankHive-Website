@@ -481,7 +481,7 @@ function Testimonial() {
               overflow: "hidden",
             }}
           >
-            <Image src="/sara-testimonial.png" alt="Sara Sharp" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover", objectPosition: "center top" }} />
+            <Image src="/sara-bi.png" alt="Sara Sharp" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover", objectPosition: "center top" }} />
             <div style={{
               position: "absolute",
               inset: 0,
