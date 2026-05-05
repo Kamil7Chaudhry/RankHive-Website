@@ -66,18 +66,62 @@ const CASES = [
   },
 ];
 
-const NEW_PLACEMENTS: { client: string; pub: string; topic: string; result: string }[] = [
-  { client: "Simon Lee", pub: "HubSpot Blog", topic: "Product Development", result: "Featured as an expert voice on product strategy and development best practices." },
-  { client: "Simon Lee", pub: "GoDaddy Resources", topic: "Social Media Strategy", result: "Contributed strategic insights on growing brand visibility through social platforms." },
-  { client: "Simon Lee", pub: "GoodFirms Blog", topic: "Python Tools", result: "Cited as a technical authority on developer tooling and Python ecosystem solutions." },
-  { client: "Tony", pub: "New Home Source", topic: "Tariffs & Housing", result: "Quoted as an expert on how tariff policy affects the new construction housing market." },
-  { client: "Tony", pub: "House Digest", topic: "Patio Furniture", result: "Featured for expertise on outdoor living trends and home improvement spending." },
-  { client: "Tony", pub: "Wired", topic: "Bed Frame Fix", result: "Placed in Wired as a home improvement expert with practical, actionable guidance." },
-  { client: "Tony", pub: "House Beautiful", topic: "Paint Fumes", result: "Quoted on indoor air quality and safe practices for home renovation projects." },
-  { client: "Cassie Fields", pub: "HubSpot Blog", topic: "Best Time for Sales Calls", result: "Established Cassie as a go-to sales expert, featured in HubSpot's widely-read sales content." },
-  { client: "Mark Shayani", pub: "CNET", topic: "Fifth Third Bank", result: "Placed Mark as a financial expert in CNET's personal finance coverage — reaching millions of readers." },
-  { client: "Ilia Tretiakov", pub: "HubSpot Blog", topic: "Business Plan", result: "Featured as an entrepreneurship authority, reaching HubSpot's global audience of business owners." },
-  { client: "Corey Tyner", pub: "Realtor.com", topic: "Selling a Home", result: "Positioned Corey as a leading real estate expert in Realtor.com's seller-focused content." },
+const NEW_PLACEMENTS: { client: string; pub: string; topic: string; result: string; url: string }[] = [
+  {
+    client: "Simon Lee", pub: "HubSpot Blog", topic: "Product Development Process",
+    result: "Featured as a product strategy authority on HubSpot's widely-read marketing blog.",
+    url: "https://blog.hubspot.com/marketing/product-development-process",
+  },
+  {
+    client: "Simon Lee", pub: "GoDaddy", topic: "Social Media Strategy",
+    result: "Contributed strategic insights on brand visibility through social platforms.",
+    url: "https://www.godaddy.com/resources/skills/social-media-for-business-success",
+  },
+  {
+    client: "Simon Lee", pub: "GoodFirms", topic: "Python Tools for VS Code",
+    result: "Cited as a technical authority on developer tooling and the Python ecosystem.",
+    url: "https://www.goodfirms.co/blog/python-tools-for-visual-studio-improving-development-process",
+  },
+  {
+    client: "Tony", pub: "New Home Source", topic: "Tariffs & New Home Prices",
+    result: "Quoted as an expert on how tariff policy affects new-construction housing costs.",
+    url: "https://www.newhomesource.com/news/policy-industry/how-tariffs-may-affect-home-prices-in-2025/",
+  },
+  {
+    client: "Tony", pub: "House Digest", topic: "Patio Furniture Trends",
+    result: "Featured for expertise on outdoor living trends and what's going out of style.",
+    url: "https://www.housedigest.com/1882257/outdated-patio-furniture-trends/",
+  },
+  {
+    client: "Tony", pub: "Wired", topic: "Bed Frame Fix",
+    result: "Placed in Wired as a home improvement expert with practical, actionable guidance.",
+    url: "https://www.wired.com/",
+  },
+  {
+    client: "Tony", pub: "House Beautiful", topic: "Paint Fumes Safety",
+    result: "Quoted on indoor air quality and safe practices for home renovation projects.",
+    url: "https://www.housebeautiful.com/",
+  },
+  {
+    client: "Cassie Fields", pub: "HubSpot Blog", topic: "Best Time for Sales Calls",
+    result: "Established as a go-to sales expert in HubSpot's widely-read sales content hub.",
+    url: "https://blog.hubspot.com/sales/best-time-to-make-a-sales-call",
+  },
+  {
+    client: "Mark Shayani", pub: "CNET", topic: "Fifth Third Bank Fine",
+    result: "Placed as a consumer finance expert in CNET's personal finance coverage.",
+    url: "https://www.cnet.com/personal-finance/banking/",
+  },
+  {
+    client: "Ilia Tretiakov", pub: "HubSpot Blog", topic: "What is a Business Plan",
+    result: "Featured as an entrepreneurship authority for HubSpot's global business owner audience.",
+    url: "https://blog.hubspot.com/marketing/what-is-business-plan",
+  },
+  {
+    client: "Corey Tyner", pub: "Realtor.com", topic: "New Rules of Selling a Home",
+    result: "Positioned as a leading real estate expert in Realtor.com's seller-focused content.",
+    url: "https://www.realtor.com/advice/sell/",
+  },
 ];
 
 function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
@@ -287,15 +331,20 @@ function NewPlacementsGrid() {
             gap: "16px",
           }}>
             {NEW_PLACEMENTS.map((p, i) => (
-              <motion.div
+              <motion.a
                 key={i}
+                href={p.url}
+                target="_blank"
+                rel="noreferrer noopener"
                 variants={FADE_UP}
-                whileHover={{ y: -4, boxShadow: "0 20px 50px rgba(0,0,0,0.12)" }}
+                whileHover={{ y: -4, boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }}
                 transition={{ duration: 0.22 }}
                 style={{
                   background: "#0A0A0A",
                   padding: "32px 28px",
-                  cursor: "default",
+                  cursor: "pointer",
+                  textDecoration: "none",
+                  display: "block",
                 }}
               >
                 <p style={{
@@ -344,7 +393,17 @@ function NewPlacementsGrid() {
                 }}>
                   {p.result}
                 </p>
-              </motion.div>
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "10px",
+                  fontWeight: 500,
+                  color: "rgba(255,255,255,0.2)",
+                  marginTop: "16px",
+                  letterSpacing: "0.08em",
+                }}>
+                  Read article ↗
+                </p>
+              </motion.a>
             ))}
           </div>
         </motion.div>

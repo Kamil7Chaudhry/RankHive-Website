@@ -142,19 +142,23 @@ export default function Contact() {
             <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
               <motion.div variants={FADE_UP}>
                 <p style={labelStyle}>Email</p>
-                <a href="mailto:hello@rankhive.com" style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "15px",
-                  fontWeight: 400,
-                  color: "rgba(10,10,10,0.55)",
-                  textDecoration: "none",
-                  transition: "color 0.2s",
-                }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#0A0A0A"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(10,10,10,0.55)"; }}
-                >
-                  hello@rankhive.com
-                </a>
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  {["usamamalik15023@gmail.com", "kamilmunir908@gmail.com"].map(addr => (
+                    <a key={addr} href={`mailto:${addr}`} style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "14px",
+                      fontWeight: 400,
+                      color: "rgba(10,10,10,0.55)",
+                      textDecoration: "none",
+                      transition: "color 0.2s",
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#0A0A0A"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "rgba(10,10,10,0.55)"; }}
+                    >
+                      {addr}
+                    </a>
+                  ))}
+                </div>
               </motion.div>
 
               <motion.div variants={FADE_UP}>
