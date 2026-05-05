@@ -19,14 +19,6 @@ const SERVICES = [
     tagline: "Your story in the publications that matter.",
     bg: "#FFFFFF",
     desc: "We have established relationships with editors and journalists at Forbes, Inc., Business Insider, Nasdaq, Yahoo Finance, MSN, and 50+ other top-tier outlets. We don't just pitch — we place.",
-    includes: [
-      "Forbes Council features",
-      "Inc. Magazine articles",
-      "Business Insider profiles",
-      "Yahoo Finance & Nasdaq features",
-      "Industry trade publications",
-      "Podcast & media appearances",
-    ],
   },
   {
     num: "02",
@@ -34,14 +26,6 @@ const SERVICES = [
     tagline: "From unknown to industry authority.",
     bg: "#F7F5F2",
     desc: "Strategic editorial coverage that positions you as the go-to expert in your space. We build the kind of personal brand that makes people say, 'I've seen you everywhere.'",
-    includes: [
-      "Thought leadership articles",
-      "Executive positioning strategy",
-      "LinkedIn authority building",
-      "Speaking opportunity placements",
-      "Award nominations",
-      "Wikipedia & knowledge panel setup",
-    ],
   },
   {
     num: "03",
@@ -49,14 +33,6 @@ const SERVICES = [
     tagline: "Launch loud. Land everywhere.",
     bg: "#FFFFFF",
     desc: "Whether you're launching a product, company, or campaign — we build the media strategy that makes it impossible to ignore. From press release to placement.",
-    includes: [
-      "Launch press campaigns",
-      "Product announcement coverage",
-      "Funding announcement PR",
-      "Brand narrative development",
-      "Crisis communication planning",
-      "Ongoing media relations",
-    ],
   },
   {
     num: "04",
@@ -64,18 +40,10 @@ const SERVICES = [
     tagline: "Own your narrative. Always.",
     bg: "#F7F5F2",
     desc: "Control what people find when they search your name or brand. We push positive coverage, suppress harmful results, and ensure your digital presence reflects the real you.",
-    includes: [
-      "Search result optimization",
-      "Positive coverage amplification",
-      "Negative content suppression",
-      "Crisis response strategy",
-      "Online review management",
-      "Brand monitoring & alerts",
-    ],
   },
 ];
 
-function ServiceBlock({ s, i }: { s: typeof SERVICES[0]; i: number }) {
+function ServiceBlock({ s }: { s: typeof SERVICES[0] }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -87,102 +55,48 @@ function ServiceBlock({ s, i }: { s: typeof SERVICES[0]; i: number }) {
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
       >
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "60px",
-          alignItems: "start",
+        <motion.div variants={FADE_UP} style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "16px" }}>
+          <span style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "11px",
+            fontWeight: 400,
+            color: "rgba(10,10,10,0.25)",
+            letterSpacing: "0.1em",
+          }}>
+            {s.num}
+          </span>
+          <h2 style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "clamp(32px, 4.5vw, 52px)",
+            fontWeight: 900,
+            color: "#0A0A0A",
+            letterSpacing: "-0.02em",
+            lineHeight: "1.1",
+          }}>
+            {s.title}
+          </h2>
+        </motion.div>
+        <motion.p variants={FADE_UP} style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "11px",
+          fontWeight: 500,
+          letterSpacing: "0.14em",
+          color: "rgba(10,10,10,0.3)",
+          textTransform: "uppercase",
+          marginBottom: "20px",
         }}>
-          {/* Left */}
-          <div>
-            <motion.div variants={FADE_UP} style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "16px" }}>
-              <span style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "11px",
-                fontWeight: 400,
-                color: "rgba(10,10,10,0.25)",
-                letterSpacing: "0.1em",
-              }}>
-                {s.num}
-              </span>
-              <h2 style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: "clamp(32px, 4.5vw, 52px)",
-                fontWeight: 900,
-                color: "#0A0A0A",
-                letterSpacing: "-0.02em",
-                lineHeight: "1.1",
-              }}>
-                {s.title}
-              </h2>
-            </motion.div>
-            <motion.p variants={FADE_UP} style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "11px",
-              fontWeight: 500,
-              letterSpacing: "0.14em",
-              color: "rgba(10,10,10,0.3)",
-              textTransform: "uppercase",
-              marginBottom: "20px",
-            }}>
-              {s.tagline}
-            </motion.p>
-            <motion.p variants={FADE_UP} style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 300,
-              fontSize: "15.5px",
-              color: "rgba(10,10,10,0.5)",
-              lineHeight: "1.8",
-              maxWidth: "420px",
-            }}>
-              {s.desc}
-            </motion.p>
-          </div>
-
-          {/* Right */}
-          <motion.div variants={FADE_UP}>
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "10px",
-              fontWeight: 600,
-              letterSpacing: "0.18em",
-              color: "rgba(10,10,10,0.3)",
-              textTransform: "uppercase",
-              marginBottom: "16px",
-            }}>
-              INCLUDES
-            </p>
-            <div>
-              {s.includes.map((item) => (
-                <div
-                  key={item}
-                  style={{
-                    padding: "14px 0",
-                    borderBottom: "1px solid rgba(10,10,10,0.06)",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "14px",
-                  }}
-                >
-                  <span style={{
-                    width: 5, height: 5, borderRadius: "50%",
-                    background: "#0A0A0A",
-                    flexShrink: 0,
-                    display: "inline-block",
-                  }} />
-                  <span style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 400,
-                    fontSize: "14px",
-                    color: "rgba(10,10,10,0.6)",
-                  }}>
-                    {item}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
+          {s.tagline}
+        </motion.p>
+        <motion.p variants={FADE_UP} style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontWeight: 300,
+          fontSize: "15.5px",
+          color: "rgba(10,10,10,0.5)",
+          lineHeight: "1.8",
+          maxWidth: "600px",
+        }}>
+          {s.desc}
+        </motion.p>
       </motion.div>
     </div>
   );
@@ -255,8 +169,8 @@ export default function Services() {
   return (
     <>
       <ServicesHero />
-      {SERVICES.map((s, i) => (
-        <ServiceBlock key={s.num} s={s} i={i} />
+      {SERVICES.map((s) => (
+        <ServiceBlock key={s.num} s={s} />
       ))}
 
       {/* CTA */}

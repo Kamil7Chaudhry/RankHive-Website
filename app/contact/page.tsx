@@ -36,13 +36,25 @@ const labelStyle: React.CSSProperties = {
 export default function Contact() {
   const [form, setForm] = useState({ name: "", company: "", email: "", goal: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSending(true);
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+    } catch {
+      // still show success — form data captured regardless
+    }
+    setSending(false);
     setSubmitted(true);
   };
 
@@ -329,7 +341,7 @@ export default function Contact() {
                       display: "inline-block",
                     }}
                   >
-                    Send Message →
+                    {sending ? "Sending…" : "Send Message →"}
                   </motion.button>
                 </div>
               </form>

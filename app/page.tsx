@@ -312,7 +312,7 @@ function Hero() {
                 overflow: "hidden",
               }}
             >
-              <Image src="/thomas-forbes.png" alt="Thomas Codevilla — Forbes" fill style={{ objectFit: "cover" }} />
+              <Image src="/thomas-forbes.png" alt="Thomas Codevilla — Forbes" fill sizes="240px" style={{ objectFit: "cover" }} />
               <div style={{
                 position: "absolute", bottom: 0, left: 0, right: 0,
                 background: "linear-gradient(transparent, rgba(0,0,0,0.75))",
@@ -351,7 +351,7 @@ function Hero() {
                 overflow: "hidden",
               }}
             >
-              <Image src="/sara-bi.png" alt="Sara Sharp — Business Insider" fill style={{ objectFit: "cover" }} />
+              <Image src="/sara-bi.png" alt="Sara Sharp — Business Insider" fill sizes="220px" style={{ objectFit: "cover" }} />
               <div style={{
                 position: "absolute", bottom: 0, left: 0, right: 0,
                 background: "linear-gradient(transparent, rgba(0,0,0,0.75))",
@@ -389,7 +389,7 @@ function Hero() {
                 overflow: "hidden",
               }}
             >
-              <Image src="/skyler-nasdaq.png" alt="Skyler Fernandes — Nasdaq" fill style={{ objectFit: "cover" }} />
+              <Image src="/skyler-nasdaq.png" alt="Skyler Fernandes — Nasdaq" fill sizes="200px" style={{ objectFit: "cover" }} />
               <div style={{
                 position: "absolute", bottom: 0, left: 0, right: 0,
                 background: "linear-gradient(transparent, rgba(0,0,0,0.75))",
@@ -650,7 +650,7 @@ function FeaturedWork() {
                   cursor: "pointer",
                 }}
               >
-                <Image src={c.img} alt={`${c.name} — ${c.outlet}`} fill style={{ objectFit: "cover", transition: "transform 0.5s ease" }} />
+                <Image src={c.img} alt={`${c.name} — ${c.outlet}`} fill sizes="(max-width: 768px) 100vw, 20vw" style={{ objectFit: "cover", transition: "transform 0.5s ease" }} />
                 <motion.div
                   initial={{ opacity: 0 }}
                   whileHover={{ opacity: 1 }}
@@ -737,7 +737,7 @@ function Testimonial() {
               overflow: "hidden",
             }}
           >
-            <Image src="/sara-testimonial.png" alt="Sara Sharp" fill style={{ objectFit: "cover", objectPosition: "center top" }} />
+            <Image src="/sara-testimonial.png" alt="Sara Sharp" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover", objectPosition: "center top" }} />
             <div style={{
               position: "absolute",
               inset: 0,

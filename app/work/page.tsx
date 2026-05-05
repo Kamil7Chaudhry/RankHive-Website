@@ -66,6 +66,20 @@ const CASES = [
   },
 ];
 
+const NEW_PLACEMENTS: { client: string; pub: string; topic: string; result: string }[] = [
+  { client: "Simon Lee", pub: "HubSpot Blog", topic: "Product Development", result: "Featured as an expert voice on product strategy and development best practices." },
+  { client: "Simon Lee", pub: "GoDaddy Resources", topic: "Social Media Strategy", result: "Contributed strategic insights on growing brand visibility through social platforms." },
+  { client: "Simon Lee", pub: "GoodFirms Blog", topic: "Python Tools", result: "Cited as a technical authority on developer tooling and Python ecosystem solutions." },
+  { client: "Tony", pub: "New Home Source", topic: "Tariffs & Housing", result: "Quoted as an expert on how tariff policy affects the new construction housing market." },
+  { client: "Tony", pub: "House Digest", topic: "Patio Furniture", result: "Featured for expertise on outdoor living trends and home improvement spending." },
+  { client: "Tony", pub: "Wired", topic: "Bed Frame Fix", result: "Placed in Wired as a home improvement expert with practical, actionable guidance." },
+  { client: "Tony", pub: "House Beautiful", topic: "Paint Fumes", result: "Quoted on indoor air quality and safe practices for home renovation projects." },
+  { client: "Cassie Fields", pub: "HubSpot Blog", topic: "Best Time for Sales Calls", result: "Established Cassie as a go-to sales expert, featured in HubSpot's widely-read sales content." },
+  { client: "Mark Shayani", pub: "CNET", topic: "Fifth Third Bank", result: "Placed Mark as a financial expert in CNET's personal finance coverage — reaching millions of readers." },
+  { client: "Ilia Tretiakov", pub: "HubSpot Blog", topic: "Business Plan", result: "Featured as an entrepreneurship authority, reaching HubSpot's global audience of business owners." },
+  { client: "Corey Tyner", pub: "Realtor.com", topic: "Selling a Home", result: "Positioned Corey as a leading real estate expert in Realtor.com's seller-focused content." },
+];
+
 function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
@@ -103,8 +117,13 @@ function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
               overflow: "hidden",
               boxShadow: "0 24px 80px rgba(0,0,0,0.1)",
             }}>
-              <Image src={c.img} alt={`${c.client} — ${c.outlet}`} fill style={{ objectFit: "cover" }} />
-              {/* Outlet badge */}
+              <Image
+                src={c.img}
+                alt={`${c.client} — ${c.outlet}`}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                style={{ objectFit: "cover" }}
+              />
               <div style={{
                 position: "absolute",
                 top: "20px",
@@ -178,7 +197,6 @@ function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
               {c.company}
             </motion.p>
 
-            {/* Thin rule */}
             <motion.div variants={FADE_UP} style={{
               width: "32px",
               height: "1px",
@@ -186,7 +204,6 @@ function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
               marginBottom: "24px",
             }} />
 
-            {/* Outlet badge */}
             <motion.div variants={FADE_UP} style={{ marginBottom: "28px" }}>
               <span style={{
                 background: "#0A0A0A",
@@ -203,7 +220,6 @@ function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
               </span>
             </motion.div>
 
-            {/* Result */}
             <motion.p variants={FADE_UP} style={{
               fontFamily: "'DM Sans', sans-serif",
               fontWeight: 300,
@@ -215,7 +231,6 @@ function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
               {c.result}
             </motion.p>
 
-            {/* Quote */}
             <motion.p variants={FADE_UP} style={{
               fontFamily: "'Playfair Display', serif",
               fontSize: "17px",
@@ -232,6 +247,109 @@ function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+function NewPlacementsGrid() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+
+  return (
+    <section style={{ background: "#FFFFFF", padding: "100px 24px" }}>
+      <div ref={ref} style={{ maxWidth: "1280px", margin: "0 auto" }}>
+        <motion.div variants={STAGGER} initial="hidden" animate={inView ? "visible" : "hidden"}>
+          <motion.p variants={FADE_UP} style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "10px",
+            fontWeight: 600,
+            letterSpacing: "0.2em",
+            color: "rgba(10,10,10,0.3)",
+            textTransform: "uppercase",
+            marginBottom: "16px",
+          }}>
+            MORE PLACEMENTS
+          </motion.p>
+          <motion.h2 variants={FADE_UP} style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "clamp(32px, 5vw, 52px)",
+            fontWeight: 900,
+            color: "#0A0A0A",
+            letterSpacing: "-0.02em",
+            lineHeight: "1.1",
+            marginBottom: "56px",
+          }}>
+            Recent features.
+          </motion.h2>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: "16px",
+          }}>
+            {NEW_PLACEMENTS.map((p, i) => (
+              <motion.div
+                key={i}
+                variants={FADE_UP}
+                whileHover={{ y: -4, boxShadow: "0 20px 50px rgba(0,0,0,0.12)" }}
+                transition={{ duration: 0.22 }}
+                style={{
+                  background: "#0A0A0A",
+                  padding: "32px 28px",
+                  cursor: "default",
+                }}
+              >
+                <p style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "clamp(22px, 3vw, 32px)",
+                  fontWeight: 900,
+                  color: "rgba(255,255,255,0.12)",
+                  letterSpacing: "-0.02em",
+                  lineHeight: "1.1",
+                  marginBottom: "20px",
+                  wordBreak: "break-word",
+                }}>
+                  {p.pub}
+                </p>
+                <span style={{
+                  background: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  color: "rgba(255,255,255,0.5)",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "9px",
+                  fontWeight: 600,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  padding: "4px 10px",
+                  display: "inline-block",
+                  marginBottom: "20px",
+                }}>
+                  {p.topic}
+                </span>
+                <p style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "18px",
+                  fontWeight: 700,
+                  color: "#FFFFFF",
+                  marginBottom: "10px",
+                  lineHeight: "1.2",
+                }}>
+                  {p.client}
+                </p>
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 300,
+                  fontSize: "13px",
+                  color: "rgba(255,255,255,0.4)",
+                  lineHeight: "1.7",
+                }}>
+                  {p.result}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
   );
 }
 
@@ -368,6 +486,7 @@ export default function Work() {
         <CaseStudy key={c.num} c={c} i={i} />
       ))}
       <WorkTestimonial />
+      <NewPlacementsGrid />
 
       {/* CTA */}
       <section style={{ background: "#F7F5F2", padding: "100px 24px", textAlign: "center" }}>
