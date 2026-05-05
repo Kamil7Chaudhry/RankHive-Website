@@ -65,61 +65,42 @@ const CASES = [
   },
 ];
 
-const NEW_PLACEMENTS: { client: string; pub: string; topic: string; result: string; url: string }[] = [
+const NEW_PLACEMENTS: { client: string; pub: string; topic: string; result: string; url: string; favicon: string }[] = [
   {
     client: "Simon Lee", pub: "HubSpot Blog", topic: "Product Development Process",
     result: "Featured as a product strategy authority on HubSpot's widely-read marketing blog.",
     url: "https://blog.hubspot.com/marketing/product-development-process",
-  },
-  {
-    client: "Simon Lee", pub: "GoDaddy", topic: "Social Media Strategy",
-    result: "Contributed strategic insights on brand visibility through social platforms.",
-    url: "https://www.godaddy.com/resources/skills/social-media-for-business-success",
-  },
-  {
-    client: "Simon Lee", pub: "GoodFirms", topic: "Python Tools for VS Code",
-    result: "Cited as a technical authority on developer tooling and the Python ecosystem.",
-    url: "https://www.goodfirms.co/blog/python-tools-for-visual-studio-improving-development-process",
-  },
-  {
-    client: "Tony", pub: "New Home Source", topic: "Tariffs & New Home Prices",
-    result: "Quoted as an expert on how tariff policy affects new-construction housing costs.",
-    url: "https://www.newhomesource.com/news/policy-industry/how-tariffs-may-affect-home-prices-in-2025/",
-  },
-  {
-    client: "Tony", pub: "House Digest", topic: "Patio Furniture Trends",
-    result: "Featured for expertise on outdoor living trends and what's going out of style.",
-    url: "https://www.housedigest.com/1882257/outdated-patio-furniture-trends/",
+    favicon: "https://www.hubspot.com/favicon.ico",
   },
   {
     client: "Tony", pub: "Wired", topic: "Bed Frame Fix",
     result: "Placed in Wired as a home improvement expert with practical, actionable guidance.",
     url: "https://www.wired.com/",
-  },
-  {
-    client: "Tony", pub: "House Beautiful", topic: "Paint Fumes Safety",
-    result: "Quoted on indoor air quality and safe practices for home renovation projects.",
-    url: "https://www.housebeautiful.com/",
+    favicon: "https://www.wired.com/favicon.ico",
   },
   {
     client: "Cassie Fields", pub: "HubSpot Blog", topic: "Best Time for Sales Calls",
     result: "Established as a go-to sales expert in HubSpot's widely-read sales content hub.",
     url: "https://blog.hubspot.com/sales/best-time-to-make-a-sales-call",
+    favicon: "https://www.hubspot.com/favicon.ico",
   },
   {
     client: "Mark Shayani", pub: "CNET", topic: "Fifth Third Bank Fine",
     result: "Placed as a consumer finance expert in CNET's personal finance coverage.",
     url: "https://www.cnet.com/personal-finance/banking/",
+    favicon: "https://www.cnet.com/favicon.ico",
   },
   {
     client: "Ilia Tretiakov", pub: "HubSpot Blog", topic: "What is a Business Plan",
     result: "Featured as an entrepreneurship authority for HubSpot's global business owner audience.",
     url: "https://blog.hubspot.com/marketing/what-is-business-plan",
+    favicon: "https://www.hubspot.com/favicon.ico",
   },
   {
     client: "Corey Tyner", pub: "Realtor.com", topic: "New Rules of Selling a Home",
     result: "Positioned as a leading real estate expert in Realtor.com's seller-focused content.",
     url: "https://www.realtor.com/advice/sell/",
+    favicon: "https://www.realtor.com/favicon.ico",
   },
 ];
 
@@ -344,11 +325,32 @@ function NewPlacementsGrid() {
                   display: "block",
                 }}
               >
+                {/* Favicon + pub name header */}
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+                  <img
+                    src={p.favicon}
+                    alt=""
+                    width={20}
+                    height={20}
+                    style={{ width: 20, height: 20, borderRadius: "3px", flexShrink: 0, objectFit: "contain" }}
+                  />
+                  <span style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.45)",
+                  }}>
+                    {p.pub}
+                  </span>
+                </div>
+                {/* Ghost pub name — decorative */}
                 <p style={{
                   fontFamily: "'Playfair Display', serif",
                   fontSize: "clamp(22px, 3vw, 32px)",
                   fontWeight: 900,
-                  color: "rgba(255,255,255,0.12)",
+                  color: "rgba(255,255,255,0.07)",
                   letterSpacing: "-0.02em",
                   lineHeight: "1.1",
                   marginBottom: "20px",
