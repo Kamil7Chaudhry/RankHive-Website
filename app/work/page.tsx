@@ -12,59 +12,6 @@ const STAGGER = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
-const CASES = [
-  {
-    num: "01",
-    client: "Thomas Codevilla",
-    role: "Business Attorney & Co-Founder",
-    company: "SK&S Law Group",
-    outlet: "Forbes",
-    img: "",
-    result: "Secured a Forbes feature positioning Thomas as a leading authority in business law and corporate finance — driving inbound client inquiries and establishing him as a go-to expert for the media.",
-    quote: "Being featured in Forbes completely changed the caliber of clients who reach out to us.",
-  },
-  {
-    num: "02",
-    client: "Sara Sharp",
-    role: "Co-Founder & M&A Attorney",
-    company: "SK&S Law Group",
-    outlet: "Business Insider",
-    img: "/sara-bi.png",
-    result: "Landed a Business Insider feature that positioned Sara as a top M&A attorney, elevating her personal brand and generating new firm visibility across the legal industry.",
-    quote: "RankHive went above and beyond. The results speak for themselves.",
-  },
-  {
-    num: "03",
-    client: "John Browning",
-    role: "Financial Advisor & Author",
-    company: "Guardian Rock Wealth",
-    outlet: "MSN",
-    img: "",
-    result: "MSN feature amplified John's book launch and positioned him as a leading voice in personal finance — expanding his audience and driving significant book sales.",
-    quote: "The MSN placement reached exactly the audience I needed.",
-  },
-  {
-    num: "04",
-    client: "Beard Alan",
-    role: "Managing Director & CEO",
-    company: "Interlink Capital Strategies",
-    outlet: "Yahoo Finance",
-    img: "",
-    result: "Secured Yahoo Finance coverage that established Beard as a credible financial expert, building authority in capital markets and attracting new advisory clients.",
-    quote: "A single Yahoo Finance article generated more leads than months of other marketing.",
-  },
-  {
-    num: "05",
-    client: "Skyler Fernandes",
-    role: "Founder & General Partner",
-    company: "VU Venture Partners",
-    outlet: "Nasdaq",
-    img: "",
-    result: "Nasdaq feature positioned Skyler as a leading VC voice, driving LP interest and deal flow while building his authority in the venture capital ecosystem.",
-    quote: "Being on Nasdaq opened doors I didn't even know existed.",
-  },
-];
-
 const NEW_PLACEMENTS: { client: string; pub: string; topic: string; result: string; url: string; favicon: string }[] = [
   {
     client: "Simon Lee", pub: "HubSpot Blog", topic: "Product Development Process",
@@ -104,207 +51,6 @@ const NEW_PLACEMENTS: { client: string; pub: string; topic: string; result: stri
   },
 ];
 
-function CaseStudy({ c, i }: { c: typeof CASES[0]; i: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  const isEven = i % 2 === 0;
-
-  return (
-    <div
-      ref={ref}
-      style={{
-        background: isEven ? "#FFFFFF" : "#F7F5F2",
-        padding: "100px 24px",
-        borderBottom: "1px solid rgba(10,10,10,0.05)",
-      }}
-    >
-      <motion.div
-        style={{ maxWidth: "1280px", margin: "0 auto" }}
-        variants={STAGGER}
-        initial="hidden"
-        animate={inView ? "visible" : "hidden"}
-      >
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "72px",
-          alignItems: "center",
-        }}>
-          {/* Image side */}
-          <motion.div
-            variants={FADE_UP}
-            style={{ order: isEven ? 0 : 1 }}
-          >
-            <div style={{
-              position: "relative",
-              height: "500px",
-              overflow: "hidden",
-              boxShadow: "0 24px 80px rgba(0,0,0,0.1)",
-            }}>
-              <div style={{
-                position: "absolute", inset: 0,
-                background: "#111111",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
-              }}>
-                <span style={{
-                  position: "absolute",
-                  fontFamily: "'Playfair Display', serif",
-                  fontStyle: "italic",
-                  fontWeight: 900,
-                  fontSize: "clamp(52px, 9vw, 88px)",
-                  color: "rgba(255,255,255,0.08)",
-                  letterSpacing: "-0.03em",
-                  lineHeight: 1,
-                  textAlign: "center",
-                  padding: "0 24px",
-                  userSelect: "none",
-                  whiteSpace: "nowrap",
-                }}>
-                  {c.outlet}
-                </span>
-                <p style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontSize: "clamp(20px, 2.5vw, 28px)",
-                  fontWeight: 700,
-                  color: "rgba(255,255,255,0.88)",
-                  textAlign: "center",
-                  zIndex: 1,
-                  letterSpacing: "-0.01em",
-                  lineHeight: 1.2,
-                  padding: "0 24px",
-                }}>
-                  {c.client}
-                </p>
-              </div>
-              <div style={{
-                position: "absolute",
-                top: "20px",
-                left: "20px",
-                background: "#FFFFFF",
-                padding: "6px 14px",
-                boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}>
-                <span style={{
-                  width: 5, height: 5, borderRadius: "50%",
-                  background: "#2d7a4f",
-                  display: "inline-block",
-                }} />
-                <span style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "10px",
-                  fontWeight: 700,
-                  color: "#0A0A0A",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                }}>
-                  {c.outlet}
-                </span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Text side */}
-          <div style={{ order: isEven ? 1 : 0 }}>
-            <motion.p variants={FADE_UP} style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "10px",
-              fontWeight: 600,
-              letterSpacing: "0.2em",
-              color: "rgba(10,10,10,0.3)",
-              textTransform: "uppercase",
-              marginBottom: "12px",
-            }}>
-              Case Study {c.num}
-            </motion.p>
-
-            <motion.h2 variants={FADE_UP} style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "clamp(34px, 4.5vw, 56px)",
-              fontWeight: 900,
-              color: "#0A0A0A",
-              letterSpacing: "-0.02em",
-              lineHeight: "1.1",
-              marginBottom: "10px",
-            }}>
-              {c.client}
-            </motion.h2>
-
-            <motion.p variants={FADE_UP} style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "14px",
-              color: "rgba(10,10,10,0.4)",
-              marginBottom: "4px",
-            }}>
-              {c.role}
-            </motion.p>
-            <motion.p variants={FADE_UP} style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "13px",
-              color: "rgba(10,10,10,0.28)",
-              marginBottom: "28px",
-            }}>
-              {c.company}
-            </motion.p>
-
-            <motion.div variants={FADE_UP} style={{
-              width: "32px",
-              height: "1px",
-              background: "#0A0A0A",
-              marginBottom: "24px",
-            }} />
-
-            <motion.div variants={FADE_UP} style={{ marginBottom: "28px" }}>
-              <span style={{
-                background: "#0A0A0A",
-                color: "#fff",
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "9px",
-                fontWeight: 600,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                padding: "5px 12px",
-                display: "inline-block",
-              }}>
-                Featured in {c.outlet}
-              </span>
-            </motion.div>
-
-            <motion.p variants={FADE_UP} style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 300,
-              fontSize: "15px",
-              color: "rgba(10,10,10,0.5)",
-              lineHeight: "1.8",
-              marginBottom: "28px",
-            }}>
-              {c.result}
-            </motion.p>
-
-            <motion.p variants={FADE_UP} style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: "17px",
-              fontStyle: "italic",
-              fontWeight: 700,
-              color: "rgba(10,10,10,0.7)",
-              lineHeight: "1.65",
-              borderLeft: "2px solid rgba(10,10,10,0.1)",
-              paddingLeft: "16px",
-            }}>
-              &ldquo;{c.quote}&rdquo;
-            </motion.p>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
 function NewPlacementsGrid() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
@@ -322,7 +68,7 @@ function NewPlacementsGrid() {
             textTransform: "uppercase",
             marginBottom: "16px",
           }}>
-            MORE PLACEMENTS
+            RECENT FEATURES
           </motion.p>
           <motion.h2 variants={FADE_UP} style={{
             fontFamily: "'Playfair Display', serif",
@@ -358,7 +104,6 @@ function NewPlacementsGrid() {
                   display: "block",
                 }}
               >
-                {/* Favicon + pub name header */}
                 <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
                   <img
                     src={p.favicon}
@@ -378,7 +123,6 @@ function NewPlacementsGrid() {
                     {p.pub}
                   </span>
                 </div>
-                {/* Ghost pub name — decorative */}
                 <p style={{
                   fontFamily: "'Playfair Display', serif",
                   fontSize: "clamp(22px, 3vw, 32px)",
@@ -573,11 +317,8 @@ export default function Work() {
   return (
     <>
       <WorkHero />
-      {CASES.map((c, i) => (
-        <CaseStudy key={c.num} c={c} i={i} />
-      ))}
-      <WorkTestimonial />
       <NewPlacementsGrid />
+      <WorkTestimonial />
 
       {/* CTA */}
       <section style={{ background: "#F7F5F2", padding: "100px 24px", textAlign: "center" }}>
