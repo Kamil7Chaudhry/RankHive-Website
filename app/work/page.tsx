@@ -12,6 +12,14 @@ const STAGGER = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
 
+const FEATURE_PHOTOS = [
+  { src: "/thomas-forbes.png", alt: "Thomas Codevilla — Forbes" },
+  { src: "/beard-yahoo.png", alt: "Beard Alan — Yahoo Finance" },
+  { src: "/skyler-nasdaq.png", alt: "Skyler Fernandes — Nasdaq" },
+  { src: "/john-nasdaq.png", alt: "John Browning — Nasdaq" },
+  { src: "/aleksey-yahoo.png", alt: "Aleksey — Yahoo Finance" },
+];
+
 const NEW_PLACEMENTS: { client: string; pub: string; topic: string; result: string; url: string; favicon: string }[] = [
   {
     client: "Simon Lee", pub: "HubSpot Blog", topic: "Product Development Process",
@@ -50,6 +58,77 @@ const NEW_PLACEMENTS: { client: string; pub: string; topic: string; result: stri
     favicon: "https://www.realtor.com/favicon.ico",
   },
 ];
+
+function FeaturePhotoGrid() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+
+  return (
+    <section style={{ background: "#F7F5F2", padding: "100px 24px" }}>
+      <div ref={ref} style={{ maxWidth: "1280px", margin: "0 auto" }}>
+        <motion.div variants={STAGGER} initial="hidden" animate={inView ? "visible" : "hidden"}>
+          <motion.p variants={FADE_UP} style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: "10px",
+            fontWeight: 600,
+            letterSpacing: "0.2em",
+            color: "rgba(10,10,10,0.3)",
+            textTransform: "uppercase",
+            marginBottom: "16px",
+          }}>
+            FEATURED PLACEMENTS
+          </motion.p>
+          <motion.h2 variants={FADE_UP} style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "clamp(32px, 5vw, 52px)",
+            fontWeight: 900,
+            color: "#0A0A0A",
+            letterSpacing: "-0.02em",
+            lineHeight: "1.1",
+            marginBottom: "56px",
+          }}>
+            Press coverage.
+          </motion.h2>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+            gap: "16px",
+          }}>
+            {FEATURE_PHOTOS.map((photo, i) => (
+              <motion.div
+                key={i}
+                variants={FADE_UP}
+                whileHover={{ y: -4, boxShadow: "0 24px 60px rgba(0,0,0,0.18)" }}
+                transition={{ duration: 0.22 }}
+                style={{
+                  position: "relative",
+                  height: "400px",
+                  overflow: "hidden",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+                  background: "#E8E4DF",
+                }}
+              >
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center top",
+                  }}
+                />
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
 
 function NewPlacementsGrid() {
   const ref = useRef<HTMLDivElement>(null);
@@ -317,6 +396,7 @@ export default function Work() {
   return (
     <>
       <WorkHero />
+      <FeaturePhotoGrid />
       <NewPlacementsGrid />
       <WorkTestimonial />
 
